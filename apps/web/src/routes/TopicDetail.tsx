@@ -6,6 +6,7 @@ import { CategoryIcon, Pill, SafeLink, searchUrl } from '../components/bits';
 import { Banner, Button, Card, Spinner } from '../components/ui';
 import { ApiRequestError, api, errorMessage } from '../lib/api';
 import { USER_STATUS_LABEL, useLabels } from '../lib/taxonomy';
+import { TopicNotes } from './Knowledge';
 import { StartSessionButton } from './Study';
 
 function Section({ title, children, id }: { title: string; children: ReactNode; id: string }) {
@@ -355,6 +356,7 @@ export function TopicDetail() {
           w trakcie sesji nauki.
         </p>
       </Card>
+      <TopicNotes topicId={topic.id} />
     </article>
   );
 }

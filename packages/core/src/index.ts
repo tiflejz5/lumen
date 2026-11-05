@@ -11,3 +11,4 @@ export * from './classify.ts';
 export * from './selection.ts';
 export * from './content-api.ts';
 export * from './session-api.ts';
+export * from './knowledge-api.ts';

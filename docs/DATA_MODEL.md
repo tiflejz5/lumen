@@ -1,4 +1,4 @@
-# Model danych (stan: Etap 3)
+# Model danych (stan: Etap 4)
 
 Baza: jeden zaszyfrowany plik SQLite (SQLCipher). Schemat zmieniają numerowane migracje w `apps/server/src/db/migrations/` (przed migracją powstaje kopia zapasowa).
 
@@ -40,6 +40,14 @@ Baza: jeden zaszyfrowany plik SQLite (SQLCipher). Schemat zmieniają numerowane 
 | `notes`          | notatki (`note`/`summary`/`speaking`/`question`), miękkie usuwanie (`deleted_at`)                                                                    |
 
 Zasady: dla tematu może istnieć jedna aktywna sesja (indeks częściowy). Etap tylko rośnie. Czas aktywny nie przekracza czasu od startu. Odpowiedzi do quizu, zadanie wypowiedzi i warstwa rozszerzona są wysyłane do przeglądarki dopiero po osiągnięciu odpowiedniego etapu. Dzień jest zaliczony, gdy zakończono jako `completed` sesję tematu dnia. Oceny zasilają losowanie (`categoryInterest`, `tooEasy`/`tooHard` z 10 ostatnich ocen).
+
+## Migracja 004 – baza wiedzy
+
+| Tabela              | Opis                                                                                                                                      |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `knowledge_entries` | pojęcie (UUIDv7), `term`, znormalizowany `term_key` (unikalny wśród nieusuniętych), `definition`, opcjonalny `topic_id`, miękkie usuwanie |
+
+Powiązania `[[termin]]` nie mają osobnej tabeli: są odczytywane z definicji i rozwiązywane po `term_key`, a odnośniki zwrotne wyliczane przy odczycie. Zmiana nazwy pojęcia nie psuje danych – powiązanie bez pojęcia po prostu jest oznaczone jako brakujące.
 
 ## Losowanie
 

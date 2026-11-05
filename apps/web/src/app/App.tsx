@@ -4,6 +4,7 @@ import { Button, EmptyState, Spinner } from '../components/ui';
 import { StatusProvider, useStatus } from '../lib/status';
 import { TaxonomyProvider } from '../lib/taxonomy';
 import { Home } from '../routes/Home';
+import { KnowledgeEntryPage, KnowledgePage } from '../routes/Knowledge';
 import { ImportHistory, ImportReportPage, ImportWizard } from '../routes/ImportWizard';
 import { More, Soon } from '../routes/Pages';
 import { SessionPage } from '../routes/Session';
@@ -50,16 +51,8 @@ function Gate() {
         <Route element={<Shell />}>
           <Route index element={<Home />} />
           <Route path="historia" element={<HistoryPage />} />
-          <Route
-            path="baza-wiedzy"
-            element={
-              <Soon
-                title="Baza wiedzy"
-                stage={4}
-                description="Twoja osobista mini-encyklopedia z notatek, definicji i powiązań."
-              />
-            }
-          />
+          <Route path="baza-wiedzy" element={<KnowledgePage />} />
+          <Route path="baza-wiedzy/:id" element={<KnowledgeEntryPage />} />
           <Route path="notatki" element={<NotesPage />} />
           <Route
             path="statystyki"

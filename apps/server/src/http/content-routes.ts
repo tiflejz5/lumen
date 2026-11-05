@@ -26,6 +26,14 @@ import {
   needsReview,
 } from '../modules/topics/repo.ts';
 import {
+  createEntry,
+  deleteEntry,
+  getEntry,
+  listEntries,
+  search,
+  updateEntry,
+} from '../modules/knowledge/knowledge.ts';
+import {
   answerQuestion,
   createNote,
   deleteNote,
@@ -105,6 +113,16 @@ const sessionsQuery = z.object({
   status: z.enum(['active', 'finished']).optional(),
   limit: z.coerce.number().int().min(1).max(500).default(100),
 });
+
+const entryBody = z
+  .object({
+    term: z.string().trim().min(1).max(80),
+    definition: z.string().trim().min(1).max(4000),
+    topicId: z.string().regex(TOPIC_ID).optional(),
+  })
+  .strict();
+const entryUpdateBody = entryBody.omit({ topicId: true });
+const textQuery = z.object({ q: z.string().max(100).default('') });
 
 const listQuery = z.object({
   query: z.string().max(100).optional(),
@@ -454,4 +472,39 @@ export function registerContentRoutes(app: FastifyInstance, deps: ContentRouteDe
     deleteNote(dailyContext(), sessionIdParam.parse(req.params).id);
     return { ok: true };
   });
+
+  // ── baza wiedzy użytkownika ──────────────────────────────────────────────────────────────────
+  app.get('/api/knowledge', async (req) => ({
+    entries: listEntries(session.requireUnlocked().db, textQuery.parse(req.query).q),
+  }));
+
+  app.get('/api/knowledge/:id', async (req) =>
+    getEntry(session.requireUnlocked().db, sessionIdParam.parse(req.params).id),
+  );
+
+  app.post('/api/knowledge', async (req) => {
+    const b = entryBody.parse(req.body);
+    return createEntry(dailyContext(), {
+      term: b.term,
+      definition: b.definition,
+      ...(b.topicId ? { topicId: b.topicId } : {}),
+    });
+  });
+
+  app.put('/api/knowledge/:id', async (req) =>
+    updateEntry(
+      dailyContext(),
+      sessionIdParam.parse(req.params).id,
+      entryUpdateBody.parse(req.body),
+    ),
+  );
+
+  app.delete('/api/knowledge/:id', async (req) => {
+    deleteEntry(dailyContext(), sessionIdParam.parse(req.params).id);
+    return { ok: true };
+  });
+
+  app.get('/api/search', async (req) =>
+    search(session.requireUnlocked().db, textQuery.parse(req.query).q),
+  );
 }

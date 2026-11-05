@@ -9,6 +9,7 @@ const stages = [
   { name: 'etap1', match: /stage1\.spec\.ts/, port: 47901 },
   { name: 'etap2', match: /stage2\.spec\.ts/, port: 47902 },
   { name: 'etap3', match: /stage3\.spec\.ts/, port: 47903 },
+  { name: 'etap4', match: /stage4\.spec\.ts/, port: 47904 },
 ];
 
 export default defineConfig({

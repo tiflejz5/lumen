@@ -20,6 +20,10 @@ Aplikacja: **Lumen**. Ostatnia aktualizacja: 2026-11-05.
 - Streak: łagodny (1 dzień wolny w tygodniu nie przerywa serii), do dopracowania w Etapie 5.
 - Format dostarczania paczek: folder, ZIP lub pojedyncze pliki. Paczki przykładowe: opcjonalny import + tryb demonstracyjny. Katalog 240 tytułów: importowany jako „zaplanowane tytuły”.
 
+## Wynik testów Etapu 4
+
+- Vitest: 209 testów. Playwright (Firefox): 24 testy (Etap 4: 5). `tsc`, ESLint: bez błędów.
+
 ## Wynik testów Etapu 3
 
 - Vitest: 201 testów (w tym ocenianie odpowiedzi i pełny przebieg sesji przez HTTP). Playwright (Firefox): 19 testów (Etap 3: 4 – sesja, historia, notatki, niedokończone).
@@ -48,7 +52,7 @@ Patrz `README.md` i `docs/USER_GUIDE.md`. Dane: `%LOCALAPPDATA%\Lumen\`. Po aktu
 
 ## Znane ograniczenia
 
-- Patrz `docs/SECURITY.md`. Notatki powstają w sesji i można je edytować; ręczne dodawanie notatek z karty tematu oraz wyszukiwanie w notatkach – Etap 4.
+- Patrz `docs/SECURITY.md`. Notatki powstają w sesji i można je edytować; wyszukiwanie jest proste (wszystkie słowa, bez ogonków) i działa w pamięci – wystarczy dla tysięcy notatek.
 - Port `difflib` zweryfikowany na ok. 800 parach, w tym napisach ≥200 znaków; ewentualne różnice w skrajnych przypadkach wyłapią testy różnicowe.
 - Rola `paths` z manifestu jest pomijana. Katalog tytułów nie jest objęty sumami manifestu (brak roli w schemacie).
 - Oznaczenie „odłóż/znam/nieinteresujący” na temacie dnia losuje inny temat; po rozpoczęciu sesji (Etap 3) zasada może wymagać doprecyzowania.
@@ -56,4 +60,4 @@ Patrz `README.md` i `docs/USER_GUIDE.md`. Dane: `%LOCALAPPDATA%\Lumen\`. Po aktu
 
 ## Następne zadania
 
-Etap 4: baza wiedzy użytkownika (mini-encyklopedia z notatek, definicji i powiązań), wyszukiwanie w notatkach, dodawanie notatek z karty tematu.
+Etap 5: powtórki (odstępy), statystyki, odznaki i łagodny streak. Później: wygląd interfejsu (Etap 6–8: m.in. automatyczne kopie i przywracanie z UI).

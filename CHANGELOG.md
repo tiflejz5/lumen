@@ -1,5 +1,12 @@
 # Historia zmian
 
+## 0.4.0 – Etap 4: baza wiedzy (2026-11-05)
+
+- Osobista baza wiedzy: pojęcia z definicjami własnymi słowami, powiązania `[[termin]]` (czytane z treści, więc nie mogą się rozjechać), odnośniki zwrotne, brakujące pojęcia wyróżnione.
+- Zapis pojęć z tematu jednym kliknięciem w kroku „Wypowiedź” sesji.
+- Notatki przy karcie tematu; wyszukiwanie w pojęciach i notatkach niewrażliwe na wielkość liter i polskie znaki.
+- Migracja 004 (miękkie usuwanie, unikalny znormalizowany termin); testy jednostkowe, HTTP i end-to-end.
+
 ## 0.3.0 – Etap 3: sesja nauki (2026-11-05)
 
 - Sesja nauki w etapach research, sprawdzenie, wypowiedź, zakończenie; elastyczny timer z pauzą i zapisem postępu.

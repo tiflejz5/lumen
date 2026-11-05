@@ -50,6 +50,10 @@ Ekran **Dziś** pokazuje jeden temat na dzień (zmienia się o 03:00; godzinę m
 
 Timer mierzy aktywny czas nauki i można go wstrzymać; jest zapisywany co kilkanaście sekund, więc przerwana sesja niczego nie traci. Oceny wpływają na kolejne losowania (średnie zainteresowanie kategorii, dopasowanie trudności). **Historia** pokazuje zakończone sesje, a **Notatki** – podsumowania i wypowiedzi z sesji (można je edytować i usuwać).
 
+## Baza wiedzy
+
+**Baza wiedzy** to Twoja mini-encyklopedia. Dodajesz pojęcia własnymi słowami (_Nowe pojęcie_) albo zapisujesz je z sesji: w kroku „Wypowiedź” rozwiń _Pojęcia, mity i granice wiedzy_ i kliknij _Zapisz do bazy wiedzy_. W definicji możesz powiązać pojęcia, wpisując nazwę w podwójnych nawiasach, np. `[[Inflacja]]`. Istniejące pojęcia stają się linkami, brakujące są podkreślone, a na stronie pojęcia widać, które inne pojęcia się do niego odwołują. Wyszukiwanie ignoruje wielkość liter i polskie znaki. Notatki możesz dodawać także na karcie każdego tematu.
+
 ## Kopie zapasowe
 
 Ustawienia → **Kopie zapasowe** → _Utwórz kopię teraz_. Skopiuj plik z podanego folderu na pendrive lub dysk zewnętrzny. Przycisk _Sprawdź_ weryfikuje kopię.

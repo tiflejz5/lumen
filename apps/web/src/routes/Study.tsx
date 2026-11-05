@@ -7,7 +7,13 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import type { NoteView, SessionListItem, SessionView, TopicListItem } from '@lumen/core';
+import {
+  matchesQuery,
+  type NoteView,
+  type SessionListItem,
+  type SessionView,
+  type TopicListItem,
+} from '@lumen/core';
 import { Pill } from '../components/bits';
 import { Banner, Button, Card, EmptyState, PageHeader, Spinner } from '../components/ui';
 import { api, errorMessage } from '../lib/api';
@@ -142,6 +148,7 @@ export function NotesPage() {
   const [notes, setNotes] = useState<NoteView[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState<{ id: string; body: string } | null>(null);
+  const [query, setQuery] = useState('');
 
   const load = useCallback(() => {
     api<{ notes: NoteView[] }>('GET', '/api/notes')
@@ -179,6 +186,14 @@ export function NotesPage() {
           <Banner tone="danger">{error}</Banner>
         </div>
       ) : null}
+      <input
+        type="search"
+        aria-label="Szukaj w notatkach"
+        placeholder="Szukaj w notatkach…"
+        className="mb-4 w-full rounded-lg border border-line-strong bg-bg px-3 py-2.5 text-fg placeholder:text-subtle"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
       {notes.length === 0 ? (
         <Card>
           <EmptyState icon={NotebookPen} title="Brak notatek">
@@ -187,55 +202,57 @@ export function NotesPage() {
         </Card>
       ) : (
         <ul className="space-y-3">
-          {notes.map((n) => (
-            <li key={n.id}>
-              <Card className="space-y-2">
-                <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted">
-                  <span>
-                    <Link to={`/tematy/${n.topicId}`} className="text-accent hover:underline">
-                      {n.topicTitle}
-                    </Link>{' '}
-                    · {fmtDate(n.createdAt)}
-                  </span>
-                  <Pill>{KIND_LABEL[n.kind]}</Pill>
-                </div>
-                {editing?.id === n.id ? (
-                  <div className="space-y-2">
-                    <textarea
-                      aria-label="Treść notatki"
-                      rows={4}
-                      className="w-full rounded-lg border border-line-strong bg-bg px-3 py-2.5 text-fg"
-                      value={editing.body}
-                      onChange={(e) => setEditing({ id: n.id, body: e.target.value })}
-                    />
-                    <div className="flex gap-2">
-                      <Button variant="primary" onClick={() => void save()}>
-                        Zapisz
-                      </Button>
-                      <Button variant="ghost" onClick={() => setEditing(null)}>
-                        Anuluj
-                      </Button>
-                    </div>
+          {notes
+            .filter((n) => !query.trim() || matchesQuery(`${n.body} ${n.topicTitle}`, query))
+            .map((n) => (
+              <li key={n.id}>
+                <Card className="space-y-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted">
+                    <span>
+                      <Link to={`/tematy/${n.topicId}`} className="text-accent hover:underline">
+                        {n.topicTitle}
+                      </Link>{' '}
+                      · {fmtDate(n.createdAt)}
+                    </span>
+                    <Pill>{KIND_LABEL[n.kind]}</Pill>
                   </div>
-                ) : (
-                  <>
-                    <p className="whitespace-pre-wrap font-serif leading-relaxed">{n.body}</p>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="ghost"
-                        onClick={() => setEditing({ id: n.id, body: n.body })}
-                      >
-                        Edytuj
-                      </Button>
-                      <Button variant="ghost" icon={Trash2} onClick={() => void remove(n.id)}>
-                        Usuń
-                      </Button>
+                  {editing?.id === n.id ? (
+                    <div className="space-y-2">
+                      <textarea
+                        aria-label="Treść notatki"
+                        rows={4}
+                        className="w-full rounded-lg border border-line-strong bg-bg px-3 py-2.5 text-fg"
+                        value={editing.body}
+                        onChange={(e) => setEditing({ id: n.id, body: e.target.value })}
+                      />
+                      <div className="flex gap-2">
+                        <Button variant="primary" onClick={() => void save()}>
+                          Zapisz
+                        </Button>
+                        <Button variant="ghost" onClick={() => setEditing(null)}>
+                          Anuluj
+                        </Button>
+                      </div>
                     </div>
-                  </>
-                )}
-              </Card>
-            </li>
-          ))}
+                  ) : (
+                    <>
+                      <p className="whitespace-pre-wrap font-serif leading-relaxed">{n.body}</p>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          onClick={() => setEditing({ id: n.id, body: n.body })}
+                        >
+                          Edytuj
+                        </Button>
+                        <Button variant="ghost" icon={Trash2} onClick={() => void remove(n.id)}>
+                          Usuń
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </Card>
+              </li>
+            ))}
         </ul>
       )}
     </>

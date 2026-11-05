@@ -241,6 +241,7 @@ export function SessionPage() {
   const [confidence, setConfidence] = useState<number | null>(null);
   const [difficulty, setDifficulty] = useState<DifficultyRating | null>(null);
   const [deepen, setDeepen] = useState(false);
+  const [saved, setSaved] = useState<Record<string, string>>({});
   const active = session?.status === 'active';
   const timer = useActiveTimer(session?.activeSeconds ?? 0, active);
   const timerRef = timer.ref;
@@ -288,6 +289,22 @@ export function SessionPage() {
         activeSeconds: timerRef.current,
       }),
     );
+
+  async function saveConcept(k: { term: string; definition: string }) {
+    try {
+      await api('POST', '/api/knowledge', {
+        term: k.term,
+        definition: k.definition,
+        topicId: session?.topicId,
+      });
+      setSaved((v) => ({ ...v, [k.term]: 'Zapisano' }));
+    } catch (e) {
+      // „Takie pojęcie już jest” traktujemy jako zapisane, inne błędy pokazujemy
+      const msg = errorMessage(e);
+      if (/już jest/.test(msg)) setSaved((v) => ({ ...v, [k.term]: 'Już w bazie wiedzy' }));
+      else setError(msg);
+    }
+  }
 
   const finish = (outcome: 'completed' | 'partial') =>
     run(async () => {
@@ -444,10 +461,19 @@ export function SessionPage() {
             <details className="text-sm text-muted">
               <summary className="cursor-pointer text-fg">Pojęcia, mity i granice wiedzy</summary>
               <div className="mt-3 space-y-3">
-                <ul className="space-y-1">
+                <ul className="space-y-2">
                   {ext.keyConcepts.map((k) => (
-                    <li key={k.term}>
-                      <span className="text-fg">{k.term}</span> – {k.definition}
+                    <li key={k.term} className="flex flex-wrap items-start justify-between gap-2">
+                      <span>
+                        <span className="text-fg">{k.term}</span> – {k.definition}
+                      </span>
+                      {saved[k.term] ? (
+                        <span className="text-ok">{saved[k.term]}</span>
+                      ) : (
+                        <Button variant="ghost" onClick={() => void saveConcept(k)}>
+                          Zapisz do bazy wiedzy
+                        </Button>
+                      )}
                     </li>
                   ))}
                 </ul>
