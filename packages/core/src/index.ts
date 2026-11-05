@@ -13,3 +13,4 @@ export * from './content-api.ts';
 export * from './session-api.ts';
 export * from './knowledge-api.ts';
 export * from './progress.ts';
+export * from './backup-api.ts';

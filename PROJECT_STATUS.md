@@ -20,6 +20,10 @@ Aplikacja: **Lumen**. Ostatnia aktualizacja: 2026-11-05.
 - Streak: łagodny (1 dzień wolny w tygodniu nie przerywa serii), do dopracowania w Etapie 5.
 - Format dostarczania paczek: folder, ZIP lub pojedyncze pliki. Paczki przykładowe: opcjonalny import + tryb demonstracyjny. Katalog 240 tytułów: importowany jako „zaplanowane tytuły”.
 
+## Wynik testów Etapu 6
+
+- Vitest: 234 testy (m.in. automatyczne kopie, folder dodatkowy, przywracanie, scenariusz „nowy komputer”, eksport/import). Playwright (Firefox): 33 testy (Etap 6: 5). `tsc`, ESLint: bez błędów.
+
 ## Wynik testów Etapu 5
 
 - Vitest: 222 testy (m.in. harmonogram powtórek, streak, odznaki). Playwright (Firefox): 28 testów (Etap 5: 4). `tsc`, ESLint: bez błędów.
@@ -60,8 +64,8 @@ Patrz `README.md` i `docs/USER_GUIDE.md`. Dane: `%LOCALAPPDATA%\Lumen\`. Po aktu
 - Port `difflib` zweryfikowany na ok. 800 parach, w tym napisach ≥200 znaków; ewentualne różnice w skrajnych przypadkach wyłapią testy różnicowe.
 - Rola `paths` z manifestu jest pomijana. Katalog tytułów nie jest objęty sumami manifestu (brak roli w schemacie).
 - Oznaczenie „odłóż/znam/nieinteresujący” na temacie dnia losuje inny temat; po rozpoczęciu sesji (Etap 3) zasada może wymagać doprecyzowania.
-- Brak interfejsu przywracania kopii i automatycznych kopii (Etap 6).
+- Eksport danych jest niezaszyfrowanym JSON-em (świadomy wybór: czytelność i przenośność); szyfrowane archiwum to zaszyfrowane kopie zapasowe.
 
 ## Następne zadania
 
-Etap 6: automatyczne kopie zapasowe i przywracanie z interfejsu, eksport/import danych użytkownika. Następnie dopracowanie wyglądu interfejsu (Etap 7–8).
+Etap 7: synchronizacja między urządzeniami (na bazie eksportu/importu z UUID i `updated_at`) oraz `docs/SYNC.md`. Etap 8: dopracowanie wyglądu interfejsu, dostępność, wydajność i finalne testy.

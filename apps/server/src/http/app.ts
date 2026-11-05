@@ -26,16 +26,11 @@ import {
 import { APP_VERSION, type AppPaths } from '../config.ts';
 import { NewerDatabaseError } from '../db/migrate.ts';
 import { DbError } from '../db/connection.ts';
-import {
-  BackupError,
-  createBackup,
-  listBackups,
-  verifyBackup,
-  verifyBackupWithDek,
-} from '../modules/backup/backup.ts';
+import { BackupError, verifyBackup, verifyBackupWithDek } from '../modules/backup/backup.ts';
 import { ImportStaging } from '../modules/importer/staging.ts';
 import { AppSession, SessionError } from '../session/app-session.ts';
 import { StudyError } from '../modules/sessions/sessions.ts';
+import { registerBackupRoutes } from './backup-routes.ts';
 import { registerContentRoutes } from './content-routes.ts';
 import { VaultError } from '../vault/vault.ts';
 
@@ -78,6 +73,8 @@ const PUBLIC_ROUTES = new Set([
   'POST /api/unlock',
   'POST /api/unlock/recovery',
   'POST /api/internal/shutdown',
+  'GET /api/restore/initial/list',
+  'POST /api/restore/initial',
 ]);
 /** Zapytania, które nie liczą się jako aktywność użytkownika (nie odnawiają auto-blokady). */
 const PASSIVE_ROUTES = new Set(['GET /api/status', 'GET /api/health']);
@@ -303,23 +300,6 @@ export async function buildApp(options: BuildAppOptions): Promise<FastifyInstanc
     session.updateSettings(settingsPatchSchema.parse(req.body)),
   );
 
-  app.get('/api/backups', async () => ({
-    backups: await listBackups(paths.backupsDir),
-    directory: paths.backupsDir,
-  }));
-
-  app.post('/api/backups', async () => {
-    const { db, dek, vault } = session.requireUnlocked();
-    return createBackup({
-      db,
-      dek,
-      vault,
-      dir: paths.backupsDir,
-      kind: 'manual',
-      appVersion: APP_VERSION,
-    });
-  });
-
   app.post('/api/backups/verify', async (req) => {
     const body = verifyBackupBody.parse(req.body);
     const file = resolve(paths.backupsDir, body.name);
@@ -335,6 +315,7 @@ export async function buildApp(options: BuildAppOptions): Promise<FastifyInstanc
   // ── treści: import, tematy, temat dnia ────────────────────────────────────────────────────
   const staging = new ImportStaging();
   session.onLock(() => staging.clear());
+  registerBackupRoutes(app, { session, paths, now: options.now ?? (() => new Date()) });
   registerContentRoutes(app, { session, paths, staging, now: options.now ?? (() => new Date()) });
 
   // ── frontend (po zbudowaniu) ─────────────────────────────────────────────────────────────

@@ -1,4 +1,4 @@
-# Model danych (stan: Etap 5)
+# Model danych (stan: Etap 6)
 
 Baza: jeden zaszyfrowany plik SQLite (SQLCipher). Schemat zmieniają numerowane migracje w `apps/server/src/db/migrations/` (przed migracją powstaje kopia zapasowa).
 
@@ -58,6 +58,10 @@ Powiązania `[[termin]]` nie mają osobnej tabeli: są odczytywane z definicji i
 | `badges`       | zdobyte odznaki z datą (definicje i progi są w kodzie: `packages/core/src/progress.ts`) |
 
 Harmonogram: odstępy `REVIEW_LADDER`; „nie pamiętam” wraca do etapu 0, „z trudem” zostaje, „dobrze” +1, „łatwo” +2. Powtórkę zakłada ukończenie tematu (kolejne ukończenie resetuje ją). Streak jest liczony z dni, w których zakończono sesję lub wykonano powtórkę.
+
+## Dane użytkownika i scalanie (Etap 6)
+
+Eksport obejmuje tabele: `topic_user_state`, `daily_assignments`, `study_sessions`, `quiz_answers`, `notes`, `knowledge_entries`, `review_items`, `review_log`, `badges`. Scalanie: `lww` (nowszy `updated_at`) dla rekordów edytowalnych, „dopisz brakujące” dla dzienników, wcześniejsza data dla odznak. Ustawienia nie są eksportowane (dotyczą urządzenia). `meta` zawiera dodatkowo `last_mirror_at` i `last_mirror_error` (stan kopiowania do folderu dodatkowego).
 
 ## Losowanie
 

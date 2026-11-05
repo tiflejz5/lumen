@@ -418,6 +418,9 @@ describe('ustawienia', () => {
       autoLockMinutes: 15,
       dayStartHour: 3,
       demoMode: false,
+      autoBackup: true,
+      autoBackupKeep: 7,
+      backupMirrorDir: '',
     });
     expect(
       (await req('PUT', '/api/settings', { autoLockMinutes: 30 }, { cookie })).json()

@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 import { APP_NAME, APP_VERSION, PREFERRED_PORT, resolvePaths } from './config.ts';
 import { buildApp } from './http/app.ts';
+import { runAutoBackup } from './modules/backup/auto.ts';
 import { AppSession } from './session/app-session.ts';
 
 const HOST = '127.0.0.1';
@@ -88,11 +89,27 @@ async function main(): Promise<void> {
     closing = true;
     app.log.info(`zatrzymywanie: ${reason}`);
     clearInterval(timer);
+    clearInterval(backupTimer);
     session.lock();
     await app.close().catch(() => {});
     await fs.rm(paths.lockFile, { force: true });
     process.exit(0);
   }
+
+  // Automatyczna kopia zapasowa: po odblokowaniu i co godzinę (wykonuje się najwyżej raz na dobę).
+  const autoBackup = () => {
+    if (!session.isUnlocked) return;
+    const { db, dek, vault } = session.requireUnlocked();
+    runAutoBackup({ db, dek, vault, paths, settings: session.currentSettings, now: new Date() })
+      .then((r) => {
+        if (r.reason === 'created') app.log.info('wykonano automatyczną kopię zapasową');
+        if (r.mirror?.error) app.log.warn('nie udało się skopiować kopii do dodatkowego folderu');
+      })
+      .catch(() => app.log.warn('automatyczna kopia zapasowa nie powiodła się'));
+  };
+  session.onUnlock(() => setTimeout(autoBackup, 2000).unref());
+  const backupTimer = setInterval(autoBackup, 3_600_000);
+  backupTimer.unref();
 
   const timer = setInterval(() => {
     if (session.tick()) app.log.info('automatyczna blokada po bezczynności');

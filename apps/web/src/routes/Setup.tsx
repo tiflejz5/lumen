@@ -1,3 +1,4 @@
+import { RestoreInitial } from './BackupSettings';
 import { Copy, KeyRound, Printer, ShieldCheck } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { MIN_PASSWORD_LENGTH, type SetupStartResponse } from '@lumen/core';
@@ -142,6 +143,9 @@ export function Setup() {
                 Dalej
               </Button>
             </form>
+            <div className="mt-5 border-t border-line pt-4">
+              <RestoreInitial />
+            </div>
           </Card>
         )}
 

@@ -1,9 +1,10 @@
-import { Copy, DatabaseBackup, KeyRound, Power, ShieldCheck } from 'lucide-react';
-import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from 'react';
-import { MIN_PASSWORD_LENGTH, type BackupInfo, type Settings } from '@lumen/core';
+import { Copy, KeyRound, Power, ShieldCheck } from 'lucide-react';
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
+import { MIN_PASSWORD_LENGTH, type Settings } from '@lumen/core';
 import { Banner, Button, Card, Field, PageHeader, PasswordInput, Spinner } from '../components/ui';
 import { api, errorMessage } from '../lib/api';
 import { useStatus } from '../lib/status';
+import { BackupSection, UserDataSection } from './BackupSettings';
 
 const LOCK_OPTIONS = [5, 10, 15, 30, 60, 120];
 const SELECT =
@@ -41,6 +42,7 @@ export function SettingsPage() {
         <PasswordSection />
         <RecoverySection />
         <BackupSection />
+        <UserDataSection />
         <AppSection />
       </div>
     </>
@@ -288,133 +290,6 @@ function RecoverySection() {
             Wygeneruj nowy klucz
           </Button>
         </form>
-      )}
-    </Section>
-  );
-}
-
-function formatSize(bytes: number): string {
-  return bytes < 1024 * 1024
-    ? `${Math.max(1, Math.round(bytes / 1024))} KB`
-    : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
-}
-
-const KIND_LABEL: Record<BackupInfo['kind'], string> = {
-  manual: 'Ręczna',
-  auto: 'Automatyczna',
-  'pre-operation': 'Przed zmianą',
-};
-
-type VerifyState = { ok: boolean; text: string };
-
-function BackupSection() {
-  const [backups, setBackups] = useState<BackupInfo[] | null>(null);
-  const [directory, setDirectory] = useState('');
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [verified, setVerified] = useState<Record<string, VerifyState>>({});
-  const [checking, setChecking] = useState<string | null>(null);
-
-  const load = useCallback(async () => {
-    try {
-      const res = await api<{ backups: BackupInfo[]; directory: string }>('GET', '/api/backups');
-      setBackups(res.backups);
-      setDirectory(res.directory);
-    } catch (e) {
-      setError(errorMessage(e));
-    }
-  }, []);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
-
-  async function create() {
-    setBusy(true);
-    setError(null);
-    try {
-      await api('POST', '/api/backups', {});
-      await load();
-    } catch (e) {
-      setError(errorMessage(e));
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function verify(name: string) {
-    setChecking(name);
-    try {
-      const res = await api<{ ok: boolean; message?: string; counts?: Record<string, number> }>(
-        'POST',
-        '/api/backups/verify',
-        { name },
-      );
-      setVerified((v) => ({
-        ...v,
-        [name]: {
-          ok: res.ok,
-          text: res.ok ? 'Kopia jest poprawna' : (res.message ?? 'Kopia jest uszkodzona'),
-        },
-      }));
-    } catch (e) {
-      setVerified((v) => ({ ...v, [name]: { ok: false, text: errorMessage(e) } }));
-    } finally {
-      setChecking(null);
-    }
-  }
-
-  return (
-    <Section icon={DatabaseBackup} title="Kopie zapasowe">
-      <p className="text-muted">
-        Kopie są zaszyfrowane tym samym hasłem i kluczem odzyskiwania. Automatyczne kopie, zapis na
-        pendrive lub w folderze chmury oraz przywracanie z poziomu aplikacji pojawią się w Etapie 6.
-      </p>
-      {directory ? (
-        <p className="break-all text-sm text-subtle">
-          Folder kopii: <span className="font-mono">{directory}</span>
-        </p>
-      ) : null}
-      <Banner tone="warn" title="Brak kopii poza tym komputerem">
-        Skopiuj plik z folderu kopii na pendrive lub dysk zewnętrzny. Awaria dysku zniszczy zarówno
-        bazę, jak i kopie leżące obok.
-      </Banner>
-      {error ? <Banner tone="danger">{error}</Banner> : null}
-      <Button variant="primary" onClick={create} busy={busy} icon={DatabaseBackup}>
-        Utwórz kopię teraz
-      </Button>
-      {backups === null ? (
-        <Spinner />
-      ) : backups.length === 0 ? (
-        <p className="text-sm text-subtle">Nie ma jeszcze żadnej kopii.</p>
-      ) : (
-        <ul className="divide-y divide-line rounded-lg border border-line">
-          {backups.map((b) => (
-            <li
-              key={b.name}
-              className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
-            >
-              <div className="min-w-0">
-                <p className="tabular">{new Date(b.createdAt).toLocaleString('pl-PL')}</p>
-                <p className="text-sm text-subtle">
-                  {KIND_LABEL[b.kind]}
-                  {b.label ? ` · ${b.label}` : ''} · {formatSize(b.sizeBytes)}
-                </p>
-                {verified[b.name] ? (
-                  <p
-                    className={`text-sm ${verified[b.name]!.ok ? 'text-ok' : 'text-danger'}`}
-                    role="status"
-                  >
-                    {verified[b.name]!.text}
-                  </p>
-                ) : null}
-              </div>
-              <Button onClick={() => verify(b.name)} busy={checking === b.name}>
-                Sprawdź
-              </Button>
-            </li>
-          ))}
-        </ul>
       )}
     </Section>
   );

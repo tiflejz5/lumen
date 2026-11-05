@@ -60,6 +60,10 @@ Timer mierzy aktywny czas nauki i można go wstrzymać; jest zapisywany co kilka
 - **Statystyki:** seria dni, czas nauki, trafność quizów, wykres ostatnich 30 dni i postęp w kategoriach. Seria jest łagodna: jeden dzień wolny w tygodniu jej nie przerywa.
 - **Osiągnięcia:** odznaki za regularność i postęp; zdobyte zostają na stałe.
 
+## Kopie zapasowe, przywracanie i eksport
+
+Szczegóły w `docs/BACKUP.md`. W skrócie: kopie robią się same raz na dobę; w Ustawieniach wskaż **dodatkowy folder** (pendrive lub folder chmury), żeby kopie przetrwały awarię dysku. **Przywróć…** cofa bazę do wybranej kopii (z potwierdzeniem i kopią stanu sprzed). **Eksportuj dane** zapisuje Twoje dane do pliku JSON (niezaszyfrowanego), a **Importuj dane** scala je z inną instalacją.
+
 ## Aktualizacja aplikacji
 
 Dwuklik w `launcher\Aktualizuj.cmd` pobiera najnowszą wersję z GitHuba. Interfejs zbuduje się sam przy najbliższym uruchomieniu skrótu **Lumen** – nie trzeba nic budować ręcznie.

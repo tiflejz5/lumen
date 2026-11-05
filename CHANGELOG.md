@@ -1,5 +1,14 @@
 # Historia zmian
 
+## 0.6.0 – Etap 6: kopie zapasowe i dane użytkownika (2026-11-05)
+
+- Automatyczne kopie zapasowe: raz na dobę (po odblokowaniu i co godzinę podczas pracy), rotacja – zachowywana liczba ostatnich automatycznych kopii, ręcznych nigdy nie usuwamy.
+- Dodatkowy folder na kopie (pendrive, chmura): każda nowa kopia jest tam kopiowana; odłączony nośnik jest ostrzeżeniem, a nie błędem.
+- Stan kopii w Ustawieniach: ostrzeżenia o braku kopii, starej kopii i kopiach tylko na tym komputerze.
+- Przywracanie z interfejsu: podgląd (weryfikacja kopii i zawartość), jawne potwierdzenie, kopia stanu sprzed przywrócenia, automatyczne zablokowanie. Przywracanie także z folderu dodatkowego oraz na pierwszym uruchomieniu (np. po awarii dysku).
+- Eksport i import danych użytkownika (JSON): scalanie po UUID, nowszy zapis wygrywa, nic nie jest usuwane, kopia zabezpieczająca przed importem. Fundament pod synchronizację (Etap 7).
+- Testy: jednostkowe, HTTP (m.in. scenariusz „nowy komputer”) i end-to-end.
+
 ## 0.5.0 – Etap 5: powtórki, statystyki, odznaki (2026-11-05)
 
 - Powtórki w rosnących odstępach (1, 3, 7, 16, 35, 75, 150 dni): pytanie, własna próba przypomnienia, odsłonięcie odpowiedzi i ocena (nie pamiętam / z trudem / dobrze / łatwo). Tematy ukończone wcześniej dostają powtórkę w migracji.

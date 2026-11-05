@@ -78,6 +78,7 @@ export class AppSession {
   private lastActivity = 0;
   private pending: Pending | null = null;
   private lockListeners: (() => void)[] = [];
+  private unlockListeners: (() => void)[] = [];
 
   private failures = 0;
   private blockedUntil = 0;
@@ -157,6 +158,11 @@ export class AppSession {
   /** Rejestruje funkcję wywoływaną przy każdej blokadzie (np. czyszczenie podglądów importu). */
   onLock(listener: () => void): void {
     this.lockListeners.push(listener);
+  }
+
+  /** Rejestruje funkcję wywoływaną po każdym odblokowaniu (np. automatyczna kopia zapasowa). */
+  onUnlock(listener: () => void): void {
+    this.unlockListeners.push(listener);
   }
 
   lock(): void {
@@ -339,6 +345,7 @@ export class AppSession {
     this.settings = readSettings(this.requireUnlocked().db);
     this.lastActivity = this.now();
     this.registerSuccess();
+    for (const listener of this.unlockListeners) listener();
   }
 
   // ── operacje na koncie ──────────────────────────────────────────────────────────────────────
