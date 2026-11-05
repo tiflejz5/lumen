@@ -1,0 +1,37 @@
+{
+  "name": "lumen",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Lumen – osobista aplikacja do codziennego rozwoju wiedzy (local-first, szyfrowana).",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:server": "npm run dev -w @lumen/server",
+    "dev:web": "npm run dev -w @lumen/web",
+    "build": "npm run build -w @lumen/web",
+    "start": "node launcher/start.mjs",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.6",
+    "eslint": "^10.14.0",
+    "prettier": "^3.9.10",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.1.0"
+  },
+  "allowScripts": {
+    "better-sqlite3-multiple-ciphers": false
+  }
+}

@@ -1,0 +1,32 @@
+# zależności i build
+node_modules/
+dist/
+coverage/
+test-results/
+playwright-report/
+runtime/
+
+# DANE I SEKRETY – nigdy do repozytorium
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+*.bazabak
+*.enc
+vault.json
+vault.json.bak
+server.lock
+.env
+.env.*
+*.pem
+*.key
+logs/
+*.log
+data-local/
+
+# lokalne ustawienia narzędzi
+.claude/settings.local.json
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini

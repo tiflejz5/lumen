@@ -1,0 +1,10 @@
+node_modules
+dist
+runtime
+test-results
+playwright-report
+package-lock.json
+wiedza-baza-0.1.0
+catalog.json
+pack-000-example.json
+launcher/lumen.ico

@@ -1,0 +1,20 @@
+{
+  "name": "@lumen/server",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/main.ts",
+    "start": "node src/main.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.1.5",
+    "@fastify/static": "^10.1.10",
+    "@lumen/core": "^0.1.0",
+    "better-sqlite3-multiple-ciphers": "^13.0.3",
+    "fastify": "^5.12.8",
+    "libsodium-wrappers-sumo": "^0.8.4",
+    "zod": "^4.6.7"
+  }
+}
