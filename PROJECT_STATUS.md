@@ -8,8 +8,8 @@ Aplikacja: **Lumen**. Ostatnia aktualizacja: 2026-11-05.
 | ----------------------------------------------------------- | --------------------------------------------------------- |
 | 0 Architektura                                              | zatwierdzony                                              |
 | 1 Fundament, zabezpieczenia, kopie, launcher                | zatwierdzony                                              |
-| 2 Import bazy tematów, katalog, temat dnia                  | **zaimplementowany i przetestowany, czeka na akceptację** |
-| 3 Sesja nauki, timer, aktywności, oceny, podstawowe notatki | nie rozpoczęty                                            |
+| 2 Import bazy tematów, katalog, temat dnia                  | zaimplementowany i przetestowany                          |
+| 3 Sesja nauki, timer, aktywności, oceny, podstawowe notatki | **zaimplementowany i przetestowany, czeka na akceptację** |
 | 4–8                                                         | nie rozpoczęte                                            |
 
 ## Decyzje użytkownika
@@ -19,6 +19,11 @@ Aplikacja: **Lumen**. Ostatnia aktualizacja: 2026-11-05.
 - **Treści użytkownika są prywatne i poza repozytorium** (`wiedza-baza-*/`, `catalog.json`, `KATALOG.md`, `pack-*.json`, `FIELDS.md` w `.gitignore`). W repozytorium są tylko schematy JSON potrzebne walidatorowi (`packages/core/schema/`) i syntetyczne dane testowe.
 - Streak: łagodny (1 dzień wolny w tygodniu nie przerywa serii), do dopracowania w Etapie 5.
 - Format dostarczania paczek: folder, ZIP lub pojedyncze pliki. Paczki przykładowe: opcjonalny import + tryb demonstracyjny. Katalog 240 tytułów: importowany jako „zaplanowane tytuły”.
+
+## Wynik testów Etapu 3
+
+- Vitest: 201 testów (w tym ocenianie odpowiedzi i pełny przebieg sesji przez HTTP). Playwright (Firefox): 19 testów (Etap 3: 4 – sesja, historia, notatki, niedokończone).
+- `tsc`, ESLint: bez błędów.
 
 ## Wynik testów Etapu 2
 
@@ -43,7 +48,7 @@ Patrz `README.md` i `docs/USER_GUIDE.md`. Dane: `%LOCALAPPDATA%\Lumen\`. Po aktu
 
 ## Znane ograniczenia
 
-- Patrz `docs/SECURITY.md`. Brak sesji nauki, ocen i notatek (Etap 3); losowanie nie uwzględnia jeszcze ocen zainteresowania ani trudności (dane pojawią się z sesjami).
+- Patrz `docs/SECURITY.md`. Notatki powstają w sesji i można je edytować; ręczne dodawanie notatek z karty tematu oraz wyszukiwanie w notatkach – Etap 4.
 - Port `difflib` zweryfikowany na ok. 800 parach, w tym napisach ≥200 znaków; ewentualne różnice w skrajnych przypadkach wyłapią testy różnicowe.
 - Rola `paths` z manifestu jest pomijana. Katalog tytułów nie jest objęty sumami manifestu (brak roli w schemacie).
 - Oznaczenie „odłóż/znam/nieinteresujący” na temacie dnia losuje inny temat; po rozpoczęciu sesji (Etap 3) zasada może wymagać doprecyzowania.
@@ -51,4 +56,4 @@ Patrz `README.md` i `docs/USER_GUIDE.md`. Dane: `%LOCALAPPDATA%\Lumen\`. Po aktu
 
 ## Następne zadania
 
-Etap 3: karta tematu → sesja (timer elastyczny, etapy research/sprawdzenie/wypowiedź), aktywności końcowe, oceny, zaliczenie dnia, niedokończone tematy, podstawowe notatki.
+Etap 4: baza wiedzy użytkownika (mini-encyklopedia z notatek, definicji i powiązań), wyszukiwanie w notatkach, dodawanie notatek z karty tematu.

@@ -35,6 +35,7 @@ import {
 } from '../modules/backup/backup.ts';
 import { ImportStaging } from '../modules/importer/staging.ts';
 import { AppSession, SessionError } from '../session/app-session.ts';
+import { StudyError } from '../modules/sessions/sessions.ts';
 import { registerContentRoutes } from './content-routes.ts';
 import { VaultError } from '../vault/vault.ts';
 
@@ -189,6 +190,7 @@ export async function buildApp(options: BuildAppOptions): Promise<FastifyInstanc
         error.retryAfterSeconds ? { retryAfterSeconds: error.retryAfterSeconds } : {},
       );
     }
+    if (error instanceof StudyError) return send(reply, error.status, error.code, error.message);
     if (error instanceof VaultError) {
       const status = error.code === 'corrupt_vault' ? 500 : 401;
       return send(reply, status, error.code, error.message);

@@ -34,10 +34,21 @@ Import nigdy nie zmienia Twoich oznaczeń, notatek ani historii. Tematów się n
 
 Ekran **Dziś** pokazuje jeden temat na dzień (zmienia się o 03:00; godzinę można zmienić w Ustawieniach). Temat wybierają jawne reguły: równowaga kategorii, dopasowanie trudności, brak powtórek, rotacja kategorii (ta sama najwyżej 2 dni z rzędu). Przycisk **Dlaczego ten temat?** pokazuje składniki wyboru.
 
-- **Otwórz temat** pokazuje kartę z pytaniem głównym, pytaniami badawczymi, zapytaniami do wyszukiwarki, źródłami i wskazówkami weryfikacji. Opracowanie i quiz są ukryte do czasu sesji nauki (Etap 3).
+- **Otwórz temat** pokazuje kartę z pytaniem głównym, pytaniami badawczymi, zapytaniami do wyszukiwarki, źródłami i wskazówkami weryfikacji. Opracowanie i quiz są ukryte do czasu sesji nauki.
 - **Już go znam / Nieinteresujący / Odłóż na tydzień** wyłącza temat z losowania. Jeśli to temat dnia, losowany jest inny na dziś.
 - **Wylosuj dodatkowy temat** nie zastępuje tematu dnia i nie wpływa na postęp.
 - Linki do wyszukiwarki otwierają DuckDuckGo w nowej karcie, bez przekazywania żadnych Twoich danych.
+
+## Sesja nauki
+
+**Rozpocznij sesję** (na ekranie _Dziś_ albo na karcie tematu) otwiera sesję w czterech etapach:
+
+1. **Research** – pytanie główne, pytania badawcze, wyszukiwania, źródła i wskazówki weryfikacji.
+2. **Sprawdzenie** – krótki quiz. Poprawna odpowiedź i wyjaśnienie pokazują się dopiero po Twojej odpowiedzi.
+3. **Wypowiedź** – zadanie do powiedzenia na głos (z opcjonalnym zapisem), opracowanie tematu i oceny: zainteresowanie, pewność, trudność.
+4. **Zakończenie** – _Zakończ i zalicz temat_ zalicza temat (a dla tematu dnia – cały dzień) albo _Dokończę później_ zostawia go w **Niedokończonych**.
+
+Timer mierzy aktywny czas nauki i można go wstrzymać; jest zapisywany co kilkanaście sekund, więc przerwana sesja niczego nie traci. Oceny wpływają na kolejne losowania (średnie zainteresowanie kategorii, dopasowanie trudności). **Historia** pokazuje zakończone sesje, a **Notatki** – podsumowania i wypowiedzi z sesji (można je edytować i usuwać).
 
 ## Kopie zapasowe
 

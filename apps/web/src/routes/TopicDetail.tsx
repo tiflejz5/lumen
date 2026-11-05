@@ -6,6 +6,7 @@ import { CategoryIcon, Pill, SafeLink, searchUrl } from '../components/bits';
 import { Banner, Button, Card, Spinner } from '../components/ui';
 import { ApiRequestError, api, errorMessage } from '../lib/api';
 import { USER_STATUS_LABEL, useLabels } from '../lib/taxonomy';
+import { StartSessionButton } from './Study';
 
 function Section({ title, children, id }: { title: string; children: ReactNode; id: string }) {
   return (
@@ -201,6 +202,14 @@ export function TopicDetail() {
           </ul>
         </Banner>
       ) : null}
+      {topic.status === 'active' ? (
+        <div className="flex flex-wrap items-center gap-3">
+          <StartSessionButton
+            topicId={topic.id}
+            label={status === 'in_progress' ? 'Wróć do sesji' : 'Rozpocznij sesję'}
+          />
+        </div>
+      ) : null}
       {notice ? <Banner tone="info">{notice}</Banner> : null}
       {error ? <Banner tone="danger">{error}</Banner> : null}
 
@@ -342,8 +351,8 @@ export function TopicDetail() {
         ) : null}
         <p className="text-xs text-subtle">
           Rewizja {topic.revision} · ostatnia weryfikacja {topic.freshness.last_verified_at} · ocena
-          audytu: {labels.enumLabel('audit_grade', topic.auditGrade)}. Opracowanie i quiz pojawią
-          się po sesji nauki (Etap 3).
+          audytu: {labels.enumLabel('audit_grade', topic.auditGrade)}. Opracowanie i quiz odkryjesz
+          w trakcie sesji nauki.
         </p>
       </Card>
     </article>

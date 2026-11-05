@@ -1,5 +1,13 @@
 # Historia zmian
 
+## 0.3.0 – Etap 3: sesja nauki (2026-11-05)
+
+- Sesja nauki w etapach research, sprawdzenie, wypowiedź, zakończenie; elastyczny timer z pauzą i zapisem postępu.
+- Quiz oceniany po stronie serwera (normalizacja odpowiedzi krótkich); odpowiedzi i opracowanie odkrywane stopniowo.
+- Oceny (zainteresowanie, pewność, trudność) zasilają losowanie; zaliczenie dnia po ukończeniu tematu dnia.
+- Notatki (podsumowanie, wypowiedź) z edycją i miękkim usuwaniem; Historia, Notatki i Niedokończone.
+- Migracja 003; testy: jednostkowe, HTTP i end-to-end (Firefox).
+
 ## 0.2.0 – Etap 2: import tematów i temat dnia (2026-11-05)
 
 - Import wydań bazy (folder, ZIP, pojedyncze pliki, `catalog.json`) z podglądem, klasyfikacją (nowy, aktualizacja, konflikt, odświeżenie, bez zmian, starsza rewizja, nieprawidłowy) i zatwierdzaniem. Zmiany istniejących tematów wymagają zgody.

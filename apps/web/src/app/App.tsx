@@ -6,8 +6,10 @@ import { TaxonomyProvider } from '../lib/taxonomy';
 import { Home } from '../routes/Home';
 import { ImportHistory, ImportReportPage, ImportWizard } from '../routes/ImportWizard';
 import { More, Soon } from '../routes/Pages';
+import { SessionPage } from '../routes/Session';
 import { SettingsPage } from '../routes/Settings';
 import { Setup } from '../routes/Setup';
+import { HistoryPage, NotesPage, UnfinishedPage } from '../routes/Study';
 import { TopicDetail } from '../routes/TopicDetail';
 import { Topics } from '../routes/Topics';
 import { Unlock } from '../routes/Unlock';
@@ -47,16 +49,7 @@ function Gate() {
       <Routes>
         <Route element={<Shell />}>
           <Route index element={<Home />} />
-          <Route
-            path="historia"
-            element={
-              <Soon
-                title="Historia"
-                stage={3}
-                description="Tu zobaczysz wcześniejsze sesje nauki i wrócisz do tematów."
-              />
-            }
-          />
+          <Route path="historia" element={<HistoryPage />} />
           <Route
             path="baza-wiedzy"
             element={
@@ -67,16 +60,7 @@ function Gate() {
               />
             }
           />
-          <Route
-            path="notatki"
-            element={
-              <Soon
-                title="Notatki"
-                stage={3}
-                description="Własne wnioski, pytania i podsumowania sesji."
-              />
-            }
-          />
+          <Route path="notatki" element={<NotesPage />} />
           <Route
             path="statystyki"
             element={
@@ -97,16 +81,8 @@ function Gate() {
               />
             }
           />
-          <Route
-            path="niedokonczone"
-            element={
-              <Soon
-                title="Niedokończone"
-                stage={3}
-                description="Tematy, do których warto wrócić – bez presji nadrabiania."
-              />
-            }
-          />
+          <Route path="niedokonczone" element={<UnfinishedPage />} />
+          <Route path="sesja/:id" element={<SessionPage />} />
           <Route path="tematy" element={<Topics />} />
           <Route path="tematy/import" element={<ImportWizard />} />
           <Route path="tematy/importy" element={<ImportHistory />} />

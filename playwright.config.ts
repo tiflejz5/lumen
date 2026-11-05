@@ -8,6 +8,7 @@ import { defineConfig, devices } from '@playwright/test';
 const stages = [
   { name: 'etap1', match: /stage1\.spec\.ts/, port: 47901 },
   { name: 'etap2', match: /stage2\.spec\.ts/, port: 47902 },
+  { name: 'etap3', match: /stage3\.spec\.ts/, port: 47903 },
 ];
 
 export default defineConfig({

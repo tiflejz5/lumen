@@ -25,6 +25,19 @@ import {
   listTopics,
   needsReview,
 } from '../modules/topics/repo.ts';
+import {
+  answerQuestion,
+  createNote,
+  deleteNote,
+  finishSession,
+  getDayStatus,
+  getSessionView,
+  listNotes,
+  listSessions,
+  startSession,
+  updateNote,
+  updateSession,
+} from '../modules/sessions/sessions.ts';
 import type { AppSession } from '../session/app-session.ts';
 
 const TOPIC_ID = /^(fin|nau|zdr|his|psy|ogo)-\d{4}$/;
@@ -55,6 +68,44 @@ const stateBody = z
     deepen: z.boolean().optional(),
   })
   .strict();
+const sessionIdParam = z.object({ id: z.string().uuid() });
+const startBody = z.object({ topicId: z.string().regex(TOPIC_ID) }).strict();
+const updateBody = z
+  .object({
+    stage: z.enum(['check', 'speaking']).optional(),
+    activeSeconds: z.number().int().min(0).max(86_400).optional(),
+  })
+  .strict();
+const answerBody = z
+  .object({ questionId: z.string().regex(/^q[1-4]$/), answer: z.string().max(300) })
+  .strict();
+const finishBody = z
+  .object({
+    outcome: z.enum(['completed', 'partial']),
+    activeSeconds: z.number().int().min(0).max(86_400).optional(),
+    interest: z.number().int().min(1).max(5).optional(),
+    difficulty: z.enum(['too_easy', 'right', 'too_hard']).optional(),
+    confidence: z.number().int().min(1).max(5).optional(),
+    summary: z.string().max(5000).optional(),
+    speaking: z.string().max(5000).optional(),
+    deepen: z.boolean().optional(),
+  })
+  .strict();
+const noteBody = z
+  .object({
+    topicId: z.string().regex(TOPIC_ID),
+    sessionId: z.string().uuid().optional(),
+    kind: z.enum(['note', 'question']).default('note'),
+    body: z.string().trim().min(1).max(5000),
+  })
+  .strict();
+const noteTextBody = z.object({ body: z.string().trim().min(1).max(5000) }).strict();
+const noteQuery = z.object({ topicId: z.string().regex(TOPIC_ID).optional() });
+const sessionsQuery = z.object({
+  status: z.enum(['active', 'finished']).optional(),
+  limit: z.coerce.number().int().min(1).max(500).default(100),
+});
+
 const listQuery = z.object({
   query: z.string().max(100).optional(),
   category: z.string().max(40).optional(),
@@ -108,12 +159,10 @@ export function registerContentRoutes(app: FastifyInstance, deps: ContentRouteDe
     const { db, dek, vault } = session.requireUnlocked();
     const staged = staging.get(body.token);
     if (!staged) {
-      return reply
-        .code(410)
-        .send({
-          error: 'import_expired',
-          message: 'Podgląd importu wygasł. Wybierz pliki ponownie.',
-        });
+      return reply.code(410).send({
+        error: 'import_expired',
+        message: 'Podgląd importu wygasł. Wybierz pliki ponownie.',
+      });
     }
     try {
       const report = await applyImport({
@@ -327,4 +376,82 @@ export function registerContentRoutes(app: FastifyInstance, deps: ContentRouteDe
   app.post('/api/daily/extra', async () =>
     drawExtra(dailyContext(), randomBytes(6).toString('hex')),
   );
+
+  // ── sesje nauki i notatki ────────────────────────────────────────────────────────────────────
+  app.get('/api/day', async () => getDayStatus(dailyContext()));
+
+  app.get('/api/sessions', async (req) => {
+    const q = sessionsQuery.parse(req.query);
+    const { db } = session.requireUnlocked();
+    return {
+      sessions: listSessions(db, { ...(q.status ? { status: q.status } : {}), limit: q.limit }),
+    };
+  });
+
+  app.post('/api/sessions', async (req) =>
+    startSession(dailyContext(), startBody.parse(req.body).topicId),
+  );
+
+  app.get('/api/sessions/:id', async (req) =>
+    getSessionView(session.requireUnlocked().db, sessionIdParam.parse(req.params).id),
+  );
+
+  app.patch('/api/sessions/:id', async (req) =>
+    updateSession(dailyContext(), sessionIdParam.parse(req.params).id, updateBody.parse(req.body)),
+  );
+
+  app.post('/api/sessions/:id/answer', async (req) => {
+    const body = answerBody.parse(req.body);
+    return answerQuestion(
+      dailyContext(),
+      sessionIdParam.parse(req.params).id,
+      body.questionId,
+      body.answer,
+    );
+  });
+
+  app.post('/api/sessions/:id/finish', async (req) => {
+    const b = finishBody.parse(req.body);
+    return finishSession(dailyContext(), sessionIdParam.parse(req.params).id, {
+      outcome: b.outcome,
+      ...(b.activeSeconds !== undefined ? { activeSeconds: b.activeSeconds } : {}),
+      ...(b.interest !== undefined ? { interest: b.interest } : {}),
+      ...(b.difficulty ? { difficulty: b.difficulty } : {}),
+      ...(b.confidence !== undefined ? { confidence: b.confidence } : {}),
+      ...(b.summary ? { summary: b.summary } : {}),
+      ...(b.speaking ? { speaking: b.speaking } : {}),
+      ...(b.deepen !== undefined ? { deepen: b.deepen } : {}),
+    });
+  });
+
+  app.get('/api/notes', async (req) => {
+    const q = noteQuery.parse(req.query);
+    return {
+      notes: listNotes(session.requireUnlocked().db, q.topicId ? { topicId: q.topicId } : {}),
+    };
+  });
+
+  app.post('/api/notes', async (req) => {
+    const b = noteBody.parse(req.body);
+    return createNote(dailyContext(), {
+      topicId: b.topicId,
+      kind: b.kind,
+      body: b.body,
+      ...(b.sessionId ? { sessionId: b.sessionId } : {}),
+    });
+  });
+
+  app.put('/api/notes/:id', async (req) => {
+    updateNote(
+      dailyContext(),
+      sessionIdParam.parse(req.params).id,
+      noteTextBody.parse(req.body).body,
+    );
+    return { ok: true };
+  });
+
+  app.delete('/api/notes/:id', async (req) => {
+    deleteNote(dailyContext(), sessionIdParam.parse(req.params).id);
+    return { ok: true };
+  });
 }

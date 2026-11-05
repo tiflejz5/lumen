@@ -1,7 +1,7 @@
 import { BookOpenCheck, ChevronDown, Clock, Dices, FileDown } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import type { DailyResult, TopicCard } from '@lumen/core';
+import type { DailyResult, DayStatus, TopicCard } from '@lumen/core';
 import { CategoryIcon, Pill } from '../components/bits';
 import {
   Banner,
@@ -15,6 +15,7 @@ import {
 } from '../components/ui';
 import { api, errorMessage } from '../lib/api';
 import { useLabels } from '../lib/taxonomy';
+import { StartSessionButton } from './Study';
 
 const today = new Intl.DateTimeFormat('pl-PL', {
   weekday: 'long',
@@ -89,10 +90,12 @@ export function Home() {
   const [error, setError] = useState<string | null>(null);
   const [why, setWhy] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
+  const [day, setDay] = useState<DayStatus | null>(null);
 
   const load = useCallback(async () => {
     try {
       setDaily(await api<DailyResult>('GET', '/api/daily'));
+      setDay(await api<DayStatus>('GET', '/api/day'));
       setError(null);
     } catch (e) {
       setError(errorMessage(e));
@@ -178,7 +181,19 @@ export function Home() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <Link to={`/tematy/${daily.topic.id}`} className={buttonClasses('primary')}>
+            {day?.dailyDone ? (
+              <Pill tone="ok">Dzień zaliczony</Pill>
+            ) : (
+              <StartSessionButton
+                topicId={daily.topic.id}
+                label={
+                  day?.activeSession?.topicId === daily.topic.id
+                    ? 'Wróć do sesji'
+                    : 'Rozpocznij sesję'
+                }
+              />
+            )}
+            <Link to={`/tematy/${daily.topic.id}`} className={buttonClasses('secondary')}>
               Otwórz temat
             </Link>
             <Button
@@ -224,8 +239,7 @@ export function Home() {
             </Button>
           </div>
           <p className="text-xs text-subtle">
-            Wybranie jednej z tych opcji losuje inny temat na dziś. Pełna sesja nauki z timerem
-            pojawi się w Etapie 3.
+            Wybranie jednej z tych opcji losuje inny temat na dziś.
           </p>
         </Card>
       ) : null}
@@ -250,9 +264,12 @@ export function Home() {
               <TopicHeader topic={extra.topic} />
               <h3 className="text-xl leading-snug">{extra.topic.title}</h3>
               <p className="max-w-[65ch] font-serif text-muted">{extra.topic.summary}</p>
-              <Link to={`/tematy/${extra.topic.id}`} className={buttonClasses('secondary')}>
-                Otwórz temat
-              </Link>
+              <div className="flex flex-wrap gap-3">
+                <StartSessionButton topicId={extra.topic.id} />
+                <Link to={`/tematy/${extra.topic.id}`} className={buttonClasses('secondary')}>
+                  Otwórz temat
+                </Link>
+              </div>
             </Card>
           ) : extra ? (
             <div className="mt-4">

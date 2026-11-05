@@ -1,4 +1,4 @@
-# Model danych (stan: Etap 2)
+# Model danych (stan: Etap 3)
 
 Baza: jeden zaszyfrowany plik SQLite (SQLCipher). Schemat zmieniają numerowane migracje w `apps/server/src/db/migrations/` (przed migracją powstaje kopia zapasowa).
 
@@ -31,13 +31,23 @@ Baza: jeden zaszyfrowany plik SQLite (SQLCipher). Schemat zmieniają numerowane 
 | `topic_user_state`  | stan u użytkownika: `in_progress`, `completed`, `skipped`, `postponed` (+`postponed_until`), `known`, `not_interesting`, flaga `deepen`. Brak wiersza = temat nowy |
 | `daily_assignments` | temat dnia przypisany do daty (+ uzasadnienie losowania w JSON)                                                                                                    |
 
+## Migracja 003 – sesje nauki i notatki
+
+| Tabela           | Opis                                                                                                                                                 |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `study_sessions` | sesja tematu (UUIDv7): etap (`research`/`check`/`speaking`/`done`), status (`active`/`finished`), aktywny czas, wynik (`completed`/`partial`), oceny |
+| `quiz_answers`   | odpowiedzi w quizie (klucz: sesja + pytanie), poprawność liczona na serwerze                                                                         |
+| `notes`          | notatki (`note`/`summary`/`speaking`/`question`), miękkie usuwanie (`deleted_at`)                                                                    |
+
+Zasady: dla tematu może istnieć jedna aktywna sesja (indeks częściowy). Etap tylko rośnie. Czas aktywny nie przekracza czasu od startu. Odpowiedzi do quizu, zadanie wypowiedzi i warstwa rozszerzona są wysyłane do przeglądarki dopiero po osiągnięciu odpowiedniego etapu. Dzień jest zaliczony, gdy zakończono jako `completed` sesję tematu dnia. Oceny zasilają losowanie (`categoryInterest`, `tooEasy`/`tooHard` z 10 ostatnich ocen).
+
 ## Losowanie
 
 Czysta funkcja `selectTopic` (`packages/core/src/selection.ts`), wejście: tematy, historia, konfiguracja, ziarno. Wyjście: temat + rozbicie wag. Ziarno dnia: `daily:<device_id>:<data>`, więc wynik jest powtarzalny, a przypisanie dodatkowo zapisywane.
 
 Reguły twarde: tylko tematy aktywne; bez ukończonych, znanych, nieinteresujących i w toku; bez odłożonych do przyszłej daty; pominięte wracają po 60 dniach; bez wcześniej przypisanych jako temat dnia; bez przykładowych (poza trybem demo); ta sama kategoria najwyżej 2 dni z rzędu (poluzowana, gdy nie ma innych).
 
-Wagi miękkie (mnożniki): równowaga kategorii z 30 dni (0,25–3), dopasowanie trudności (`e^(-0,7·odległość)`), zainteresowanie kategorią (0,6–1,4, od Etapu 3), pogłębienie (×2 dla tematów powiązanych z oznaczonym „do pogłębienia”), niezrealizowane wymagania wstępne (×0,5 za każde, min. 0,15), minął termin przeglądu (×0,5).
+Wagi miękkie (mnożniki): równowaga kategorii z 30 dni (0,25–3), dopasowanie trudności (`e^(-0,7·odległość)`), zainteresowanie kategorią (0,6–1,4, ze średniej oceny sesji), pogłębienie (×2 dla tematów powiązanych z oznaczonym „do pogłębienia”), niezrealizowane wymagania wstępne (×0,5 za każde, min. 0,15), minął termin przeglądu (×0,5).
 
 ## Przygotowanie pod synchronizację
 

@@ -115,10 +115,31 @@ function loadHistory(db: Db): SelectionHistory {
     deepenIds,
     assignedBefore: new Set(daily.map((d) => d.topic_id)),
     daily: daily.map((d) => ({ date: d.date, topicId: d.topic_id, category: d.category })),
-    // Oceny i flagi trudności pojawią się wraz z sesjami (Etap 3).
-    categoryInterest: {},
-    tooEasy: 0,
-    tooHard: 0,
+    ...loadRatings(db),
+  };
+}
+
+/** Oceny z zakończonych sesji: średnie zainteresowanie kategorii i flagi trudności z ostatnich 10 ocen. */
+function loadRatings(db: Db): Pick<SelectionHistory, 'categoryInterest' | 'tooEasy' | 'tooHard'> {
+  const categoryInterest: Record<string, number> = {};
+  for (const r of db
+    .prepare(
+      `SELECT t.category AS category, avg(s.interest) AS avg FROM study_sessions s
+       JOIN topics t ON t.id = s.topic_id WHERE s.status = 'finished' AND s.interest IS NOT NULL
+       GROUP BY t.category`,
+    )
+    .all() as { category: string; avg: number }[])
+    categoryInterest[r.category] = r.avg;
+  const recent = db
+    .prepare(
+      `SELECT difficulty_rating AS d FROM study_sessions
+       WHERE status = 'finished' AND difficulty_rating IS NOT NULL ORDER BY finished_at DESC LIMIT 10`,
+    )
+    .all() as { d: string }[];
+  return {
+    categoryInterest,
+    tooEasy: recent.filter((r) => r.d === 'too_easy').length,
+    tooHard: recent.filter((r) => r.d === 'too_hard').length,
   };
 }
 
