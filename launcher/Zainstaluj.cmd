@@ -5,7 +5,7 @@ cd /d "%~dp0.."
 set "NODE=runtime\node.exe"
 if not exist "%NODE%" set "NODE=node"
 
-"%NODE%" -p "Number(process.versions.node.split('.')[0]) >= 24" 2>nul | findstr /x "true" >nul
+"%NODE%" -e "process.exit(Number(process.versions.node.split('.')[0]) >= 24 ? 0 : 1)" >nul 2>nul
 if errorlevel 1 goto :getnode
 goto :install
 

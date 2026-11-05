@@ -1,5 +1,6 @@
 # Pobiera przenosna wersje Node.js z nodejs.org do folderu runtime\ i weryfikuje jej sume SHA-256.
-# Kod i komunikaty tylko ASCII (zgodnosc z Windows PowerShell 5 bez BOM).
+# Kod i komunikaty tylko ASCII (zgodnosc z Windows PowerShell 5 bez BOM). Uzywa wylacznie .NET,
+# bez cmdletow z modulow, ktore bywaja niedostepne przy odziedziczonym PSModulePath.
 param(
   [string]$Version = '26.8.1',
   [string]$Target = ''
@@ -9,25 +10,34 @@ if (-not $Target) { $Target = Join-Path (Split-Path -Parent $PSScriptRoot) 'runt
 $file = "node-v$Version-win-x64.zip"
 $base = "https://nodejs.org/dist/v$Version"
 $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ("lumen-node-" + [guid]::NewGuid().ToString('N'))
-New-Item -ItemType Directory -Path $tmp | Out-Null
+[System.IO.Directory]::CreateDirectory($tmp) | Out-Null
 try {
   [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+  $client = New-Object System.Net.WebClient
+  $zip = Join-Path $tmp $file
   Write-Host "  Pobieranie $file ..."
-  Invoke-WebRequest -Uri "$base/$file" -OutFile (Join-Path $tmp $file) -UseBasicParsing
-  $sums = (Invoke-WebRequest -Uri "$base/SHASUMS256.txt" -UseBasicParsing).Content
-  $expected = ($sums -split "`n" | Where-Object { $_ -match [regex]::Escape($file) } | Select-Object -First 1) -replace '\s+.*$', ''
-  if (-not $expected) { throw "Brak sumy kontrolnej dla $file na nodejs.org." }
-  $actual = (Get-FileHash -Algorithm SHA256 -Path (Join-Path $tmp $file)).Hash.ToLower()
-  if ($actual -ne $expected.Trim().ToLower()) { throw "Suma SHA-256 sie nie zgadza (oczekiwano $expected, jest $actual). Przerywam." }
+  $client.DownloadFile("$base/$file", $zip)
+  $sums = $client.DownloadString("$base/SHASUMS256.txt")
+  $line = $sums -split "`n" | Where-Object { $_.Contains($file) } | Select-Object -First 1
+  if (-not $line) { throw "Brak sumy kontrolnej dla $file na nodejs.org." }
+  $expected = ($line.Trim() -split '\s+')[0].ToLower()
+  $stream = [System.IO.File]::OpenRead($zip)
+  try {
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    $actual = ([BitConverter]::ToString($sha.ComputeHash($stream)) -replace '-', '').ToLower()
+  } finally { $stream.Dispose() }
+  if ($actual -ne $expected) { throw "Suma SHA-256 sie nie zgadza (oczekiwano $expected, jest $actual). Przerywam." }
   Write-Host "  Suma kontrolna SHA-256 poprawna."
-  Expand-Archive -Path (Join-Path $tmp $file) -DestinationPath $tmp -Force
-  $src = Join-Path $tmp "node-v$Version-win-x64"
-  if (Test-Path $Target) { Remove-Item -Recurse -Force $Target }
-  New-Item -ItemType Directory -Path $Target | Out-Null
-  Copy-Item -Path (Join-Path $src 'node.exe') -Destination $Target
-  Copy-Item -Path (Join-Path $src 'LICENSE') -Destination $Target -ErrorAction SilentlyContinue
+  Add-Type -AssemblyName System.IO.Compression.FileSystem
+  $extract = Join-Path $tmp 'x'
+  [System.IO.Compression.ZipFile]::ExtractToDirectory($zip, $extract)
+  $src = Join-Path $extract "node-v$Version-win-x64"
+  if (Test-Path $Target) { [System.IO.Directory]::Delete($Target, $true) }
+  [System.IO.Directory]::CreateDirectory($Target) | Out-Null
+  [System.IO.File]::Copy((Join-Path $src 'node.exe'), (Join-Path $Target 'node.exe'))
+  if (Test-Path (Join-Path $src 'LICENSE')) { [System.IO.File]::Copy((Join-Path $src 'LICENSE'), (Join-Path $Target 'LICENSE')) }
   Write-Host "  Zainstalowano Node.js $Version w: $Target"
 }
 finally {
-  Remove-Item -Recurse -Force $tmp -ErrorAction SilentlyContinue
+  if (Test-Path $tmp) { [System.IO.Directory]::Delete($tmp, $true) }
 }
