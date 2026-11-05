@@ -39,6 +39,10 @@ Przeglądarka (React) <-HTTP 127.0.0.1-> Fastify (Host/Origin/sesja/CSP/no-store
 Paczka JSON -> limity -> schemat -> klasyfikacja -> PODGLĄD -> zgoda -> snapshot -> transakcja -> raport
 ```
 
+## Import i temat dnia (Etap 2)
+
+Potok importu (`apps/server/src/modules/importer`): `release.ts` (parser, manifest, SHA-256, schemat Ajv, reguły poziomu 2) → `preview.ts` (klasyfikacja względem bazy) → `staging.ts` (pamięć, 30 min, czyszczone przy blokadzie) → `apply.ts` (transakcja po kopii zapasowej). Losowanie: `packages/core/src/selection.ts` (czysta funkcja), `modules/daily` (przypisanie na dzień nauki, stany tematów). Szczegóły: `docs/IMPORT.md`, `docs/DATA_MODEL.md`.
+
 ## Zasady danych
 
 - UUIDv7, `created_at`, `updated_at`, `deleted_at` (tombstone), `device_id` w rekordach użytkownika.

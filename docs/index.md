@@ -10,5 +10,7 @@ Ta strona zawiera tylko dokumentację projektu. Sama aplikacja działa wyłączn
 
 - [Architektura](ARCHITECTURE.md)
 - [Bezpieczeństwo](SECURITY.md)
+- [Model danych](DATA_MODEL.md)
+- [Import bazy tematów](IMPORT.md)
 - [Kopie zapasowe](BACKUP.md)
 - [Instrukcja użytkownika](USER_GUIDE.md)

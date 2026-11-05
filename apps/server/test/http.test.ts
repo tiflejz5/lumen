@@ -417,6 +417,7 @@ describe('ustawienia', () => {
     expect((await req('GET', '/api/settings', undefined, { cookie })).json()).toEqual({
       autoLockMinutes: 15,
       dayStartHour: 3,
+      demoMode: false,
     });
     expect(
       (await req('PUT', '/api/settings', { autoLockMinutes: 30 }, { cookie })).json()

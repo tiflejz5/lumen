@@ -1,4 +1,4 @@
-# Instrukcja użytkownika (Etap 1)
+# Instrukcja użytkownika (Etap 2)
 
 ## Pierwsze uruchomienie
 
@@ -18,6 +18,26 @@
 ## Zapomniałem hasła
 
 Ekran odblokowania → **Nie pamiętam hasła** → wpisz klucz odzyskiwania i ustaw nowe hasło. Dane zostają nietknięte.
+
+## Baza tematów i import
+
+1. **Baza tematów** (menu) → **Importuj**.
+2. Wybierz **folder wydania** (z plikiem `manifest.json`), plik **ZIP** albo pojedyncze pliki paczek. Możesz dołączyć `catalog.json` z listą zaplanowanych tytułów.
+3. Zobaczysz **podgląd**: które tematy są nowe, które to aktualizacje, konflikty wersji, rekordy z błędami (zostaną odrzucone). Nowe tematy są zaznaczone, a zmiany istniejących musisz zaznaczyć sam. Rozwiń strzałką szczegóły (błędy, zmienione sekcje, uwagi).
+4. **Zaimportuj zaznaczone.** Przed zapisem aplikacja robi kopię zapasową, a po imporcie pokazuje raport (zapisany też w historii importów).
+
+Import nigdy nie zmienia Twoich oznaczeń, notatek ani historii. Tematów się nie usuwa.
+
+> Paczki przykładowe są pomijane. Zaznacz „Importuj także paczki przykładowe”, aby je wypróbować, i włącz **Tryb demonstracyjny** w Ustawieniach, żeby były losowane.
+
+## Temat dnia
+
+Ekran **Dziś** pokazuje jeden temat na dzień (zmienia się o 03:00; godzinę można zmienić w Ustawieniach). Temat wybierają jawne reguły: równowaga kategorii, dopasowanie trudności, brak powtórek, rotacja kategorii (ta sama najwyżej 2 dni z rzędu). Przycisk **Dlaczego ten temat?** pokazuje składniki wyboru.
+
+- **Otwórz temat** pokazuje kartę z pytaniem głównym, pytaniami badawczymi, zapytaniami do wyszukiwarki, źródłami i wskazówkami weryfikacji. Opracowanie i quiz są ukryte do czasu sesji nauki (Etap 3).
+- **Już go znam / Nieinteresujący / Odłóż na tydzień** wyłącza temat z losowania. Jeśli to temat dnia, losowany jest inny na dziś.
+- **Wylosuj dodatkowy temat** nie zastępuje tematu dnia i nie wpływa na postęp.
+- Linki do wyszukiwarki otwierają DuckDuckGo w nowej karcie, bez przekazywania żadnych Twoich danych.
 
 ## Kopie zapasowe
 

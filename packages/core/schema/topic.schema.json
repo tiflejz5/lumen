@@ -1,0 +1,454 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.wiedza-baza/schema/topic.schema.json",
+  "title": "Temat do codziennej sesji nauki",
+  "description": "Pojedynczy rekord tematu. Schemat w wersji 1.0.0. Klucze po angielsku (kod), treści po polsku.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "slug",
+    "revision",
+    "status",
+    "core",
+    "extended",
+    "speaking_task",
+    "relations",
+    "freshness",
+    "meta",
+    "audit",
+    "changelog"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^(fin|nau|zdr|his|psy|ogo)-[0-9]{4}$",
+      "description": "Niezmienny identyfikator. Nigdy nie jest używany ponownie."
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "maxLength": 80
+    },
+    "revision": { "type": "integer", "minimum": 1 },
+    "status": { "enum": ["active", "deprecated"] },
+    "superseded_by": {
+      "type": "string",
+      "pattern": "^(fin|nau|zdr|his|psy|ogo)-[0-9]{4}$"
+    },
+
+    "core": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "category",
+        "subcategory",
+        "difficulty",
+        "topic_type",
+        "summary",
+        "why_it_matters",
+        "main_question",
+        "research_questions",
+        "keywords",
+        "search_queries",
+        "suggested_sources",
+        "verification_tips",
+        "final_task",
+        "estimated_minutes"
+      ],
+      "properties": {
+        "title": { "type": "string", "minLength": 10, "maxLength": 140 },
+        "category": {
+          "enum": [
+            "finance",
+            "science_tech",
+            "health_sport",
+            "history_society",
+            "psychology",
+            "general"
+          ]
+        },
+        "subcategory": { "type": "string", "pattern": "^[a-z_]+$" },
+        "difficulty": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["level", "scores"],
+          "properties": {
+            "level": { "enum": ["beginner", "intermediate", "advanced"] },
+            "scores": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "prior_knowledge",
+                "complexity",
+                "abstraction",
+                "research_difficulty",
+                "concept_load"
+              ],
+              "properties": {
+                "prior_knowledge": { "type": "integer", "minimum": 1, "maximum": 3 },
+                "complexity": { "type": "integer", "minimum": 1, "maximum": 3 },
+                "abstraction": { "type": "integer", "minimum": 1, "maximum": 3 },
+                "research_difficulty": { "type": "integer", "minimum": 1, "maximum": 3 },
+                "concept_load": { "type": "integer", "minimum": 1, "maximum": 3 }
+              }
+            }
+          }
+        },
+        "topic_type": { "enum": ["timeless", "current"] },
+        "current_subtype": { "enum": ["structural", "event"] },
+        "summary": { "type": "string", "minLength": 40, "maxLength": 400 },
+        "why_it_matters": { "type": "string", "minLength": 40, "maxLength": 500 },
+        "main_question": { "type": "string", "minLength": 15, "maxLength": 250, "pattern": "\\?$" },
+        "research_questions": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 15, "maxLength": 250 }
+        },
+        "keywords": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 2, "maxLength": 60 }
+        },
+        "search_queries": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 6,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["query", "lang", "purpose"],
+            "properties": {
+              "query": { "type": "string", "minLength": 3, "maxLength": 120 },
+              "lang": { "enum": ["pl", "en"] },
+              "purpose": { "type": "string", "minLength": 5, "maxLength": 200 }
+            }
+          }
+        },
+        "suggested_sources": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 6,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source_id", "why", "what_to_find"],
+            "properties": {
+              "source_id": { "type": "string", "pattern": "^src-[a-z0-9-]+$" },
+              "why": { "type": "string", "minLength": 10, "maxLength": 300 },
+              "what_to_find": { "type": "string", "minLength": 10, "maxLength": 300 },
+              "limitations": { "type": "string", "maxLength": 300 }
+            }
+          }
+        },
+        "verification_tips": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 5,
+          "items": { "type": "string", "minLength": 15, "maxLength": 300 }
+        },
+        "final_task": { "type": "string", "minLength": 20, "maxLength": 400 },
+        "estimated_minutes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["research", "quiz", "summary"],
+          "properties": {
+            "research": { "type": "integer", "minimum": 5, "maximum": 15 },
+            "quiz": { "type": "integer", "minimum": 0, "maximum": 5 },
+            "summary": { "type": "integer", "minimum": 2, "maximum": 6 }
+          }
+        }
+      },
+      "if": { "properties": { "topic_type": { "const": "current" } } },
+      "then": { "required": ["current_subtype"] },
+      "else": { "not": { "required": ["current_subtype"] } }
+    },
+
+    "extended": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key_concepts",
+        "examples",
+        "background",
+        "misconceptions",
+        "deeper_questions",
+        "challenge",
+        "brief",
+        "takeaways",
+        "knowledge_limits",
+        "claims"
+      ],
+      "properties": {
+        "key_concepts": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["term", "definition"],
+            "properties": {
+              "term": { "type": "string", "maxLength": 80 },
+              "definition": { "type": "string", "minLength": 15, "maxLength": 350 }
+            }
+          }
+        },
+        "examples": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": { "type": "string", "minLength": 20, "maxLength": 500 }
+        },
+        "background": { "type": "string", "minLength": 50, "maxLength": 900 },
+        "misconceptions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["claim", "correction"],
+            "properties": {
+              "claim": { "type": "string", "minLength": 10, "maxLength": 250 },
+              "correction": { "type": "string", "minLength": 20, "maxLength": 450 }
+            }
+          }
+        },
+        "deeper_questions": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 5,
+          "items": { "type": "string", "minLength": 15, "maxLength": 250 }
+        },
+        "challenge": { "type": "string", "minLength": 30, "maxLength": 500 },
+        "brief": { "type": "string", "minLength": 200, "maxLength": 1800 },
+        "takeaways": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 5,
+          "items": { "type": "string", "minLength": 15, "maxLength": 250 }
+        },
+        "knowledge_limits": { "type": "string", "minLength": 30, "maxLength": 600 },
+        "claims": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 10,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["text", "claim_type", "source_ids"],
+            "properties": {
+              "text": { "type": "string", "minLength": 15, "maxLength": 400 },
+              "claim_type": {
+                "enum": [
+                  "fact",
+                  "hypothesis",
+                  "interpretation",
+                  "opinion",
+                  "prediction",
+                  "no_consensus"
+                ]
+              },
+              "source_ids": {
+                "type": "array",
+                "items": { "type": "string", "pattern": "^src-[a-z0-9-]+$" }
+              },
+              "as_of": { "type": "string", "format": "date" },
+              "note": { "type": "string", "maxLength": 300 }
+            }
+          }
+        }
+      }
+    },
+
+    "quiz": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "skill", "difficulty", "prompt", "explanation"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^q[1-4]$" },
+          "type": { "enum": ["single_choice", "short_answer"] },
+          "skill": {
+            "enum": [
+              "understanding",
+              "application",
+              "error_detection",
+              "example_analysis",
+              "inference"
+            ]
+          },
+          "difficulty": { "enum": ["beginner", "intermediate", "advanced"] },
+          "prompt": { "type": "string", "minLength": 15, "maxLength": 500 },
+          "options": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 5,
+            "items": { "type": "string", "minLength": 1, "maxLength": 200 }
+          },
+          "correct_option": { "type": "integer", "minimum": 0, "maximum": 4 },
+          "accepted_answers": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "maxLength": 200 }
+          },
+          "explanation": { "type": "string", "minLength": 20, "maxLength": 500 }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "type": { "const": "single_choice" } } },
+            "then": {
+              "required": ["options", "correct_option"],
+              "not": { "required": ["accepted_answers"] }
+            }
+          },
+          {
+            "if": { "properties": { "type": { "const": "short_answer" } } },
+            "then": {
+              "required": ["accepted_answers"],
+              "not": { "anyOf": [{ "required": ["options"] }, { "required": ["correct_option"] }] }
+            }
+          }
+        ]
+      }
+    },
+
+    "speaking_task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["format", "prompt", "duration_seconds"],
+      "properties": {
+        "format": {
+          "enum": ["explain_novice", "three_takeaways", "take_position", "pros_cons", "surprise"]
+        },
+        "prompt": { "type": "string", "minLength": 20, "maxLength": 400 },
+        "duration_seconds": { "type": "integer", "minimum": 60, "maximum": 240 }
+      }
+    },
+
+    "relations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prerequisites", "related", "next"],
+      "properties": {
+        "prerequisites": { "$ref": "#/$defs/idList" },
+        "related": { "$ref": "#/$defs/idList" },
+        "next": { "$ref": "#/$defs/idList" },
+        "paths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^path-[a-z0-9-]+$" }
+        }
+      }
+    },
+
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "created_at",
+        "last_verified_at",
+        "requires_periodic_update",
+        "review_interval_months",
+        "status",
+        "valid_as_of"
+      ],
+      "properties": {
+        "created_at": { "type": "string", "format": "date" },
+        "last_verified_at": { "type": "string", "format": "date" },
+        "valid_as_of": { "type": "string", "format": "date" },
+        "requires_periodic_update": { "type": "boolean" },
+        "review_interval_months": { "type": ["integer", "null"], "minimum": 1, "maximum": 60 },
+        "status": { "enum": ["current", "needs_review", "outdated"] },
+        "time_sensitive_items": {
+          "type": "array",
+          "maxItems": 6,
+          "items": { "type": "string", "minLength": 10, "maxLength": 250 }
+        }
+      }
+    },
+
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["concept_tags", "question_type", "mainstream", "regions"],
+      "properties": {
+        "concept_tags": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" }
+        },
+        "question_type": {
+          "enum": ["mechanism", "causal", "verification", "comparison", "evidence", "case"]
+        },
+        "mainstream": { "type": "boolean" },
+        "regions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "global",
+              "poland",
+              "europe",
+              "north_america",
+              "latin_america",
+              "africa",
+              "middle_east",
+              "asia",
+              "oceania"
+            ]
+          }
+        },
+        "era": { "type": "string", "maxLength": 60 }
+      }
+    },
+
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["grade", "audited_at", "issues", "uncertainties"],
+      "properties": {
+        "grade": { "enum": ["A", "B", "C"] },
+        "audited_at": { "type": "string", "format": "date" },
+        "issues": { "type": "array", "items": { "type": "string", "maxLength": 400 } },
+        "uncertainties": { "type": "array", "items": { "type": "string", "maxLength": 400 } }
+      }
+    },
+
+    "changelog": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["revision", "date", "change"],
+        "properties": {
+          "revision": { "type": "integer", "minimum": 1 },
+          "date": { "type": "string", "format": "date" },
+          "change": { "type": "string", "minLength": 5, "maxLength": 300 }
+        }
+      }
+    }
+  },
+
+  "$defs": {
+    "idList": {
+      "type": "array",
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^(fin|nau|zdr|his|psy|ogo)-[0-9]{4}$" }
+    }
+  }
+}

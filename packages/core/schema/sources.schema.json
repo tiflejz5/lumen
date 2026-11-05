@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.wiedza-baza/schema/sources.schema.json",
+  "title": "Rejestr źródeł",
+  "description": "Wspólny rejestr źródeł. Tematy odwołują się do źródeł po source_id, więc każde źródło weryfikuje się raz.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "sources"],
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^1\\.[0-9]+\\.[0-9]+$" },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "publisher",
+          "source_type",
+          "origin",
+          "language",
+          "description",
+          "limitations",
+          "url_status"
+        ],
+        "properties": {
+          "id": { "type": "string", "pattern": "^src-[a-z0-9-]+$" },
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Nazwa lub oryginalny tytuł."
+          },
+          "publisher": { "type": "string", "maxLength": 150 },
+          "authors": { "type": "array", "items": { "type": "string", "maxLength": 100 } },
+          "year": { "type": "integer", "minimum": 1500, "maximum": 2100 },
+          "source_type": {
+            "enum": [
+              "peer_reviewed",
+              "primary_official",
+              "research_institution",
+              "official_statistics",
+              "expert_org",
+              "reputable_media",
+              "educational_media"
+            ]
+          },
+          "origin": { "enum": ["primary", "secondary", "expert_opinion"] },
+          "language": { "type": "string", "pattern": "^[a-z]{2}$" },
+          "description": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 400,
+            "description": "Dlaczego wartościowe i co można tam znaleźć."
+          },
+          "limitations": { "type": "string", "minLength": 10, "maxLength": 400 },
+          "conflict_of_interest": { "type": "string", "maxLength": 300 },
+          "url": { "type": "string", "format": "uri", "pattern": "^https://" },
+          "url_status": { "enum": ["verified", "unverified", "institution_only"] },
+          "verified_at": { "type": "string", "format": "date" }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "url_status": { "const": "verified" } } },
+            "then": { "required": ["url", "verified_at"] }
+          },
+          {
+            "if": { "properties": { "url_status": { "const": "institution_only" } } },
+            "then": { "not": { "required": ["url"] } }
+          }
+        ]
+      }
+    }
+  }
+}

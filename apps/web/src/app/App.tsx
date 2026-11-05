@@ -2,9 +2,14 @@ import { WifiOff } from 'lucide-react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Button, EmptyState, Spinner } from '../components/ui';
 import { StatusProvider, useStatus } from '../lib/status';
-import { Home, More, Soon } from '../routes/Pages';
+import { TaxonomyProvider } from '../lib/taxonomy';
+import { Home } from '../routes/Home';
+import { ImportHistory, ImportReportPage, ImportWizard } from '../routes/ImportWizard';
+import { More, Soon } from '../routes/Pages';
 import { SettingsPage } from '../routes/Settings';
 import { Setup } from '../routes/Setup';
+import { TopicDetail } from '../routes/TopicDetail';
+import { Topics } from '../routes/Topics';
 import { Unlock } from '../routes/Unlock';
 import { Shell } from './Shell';
 
@@ -38,84 +43,81 @@ function Gate() {
   if (status?.state === 'locked') return <Unlock />;
 
   return (
-    <Routes>
-      <Route element={<Shell />}>
-        <Route index element={<Home />} />
-        <Route
-          path="historia"
-          element={
-            <Soon
-              title="Historia"
-              stage={3}
-              description="Tu zobaczysz wcześniejsze sesje nauki i wrócisz do tematów."
-            />
-          }
-        />
-        <Route
-          path="baza-wiedzy"
-          element={
-            <Soon
-              title="Baza wiedzy"
-              stage={4}
-              description="Twoja osobista mini-encyklopedia z notatek, definicji i powiązań."
-            />
-          }
-        />
-        <Route
-          path="notatki"
-          element={
-            <Soon
-              title="Notatki"
-              stage={3}
-              description="Własne wnioski, pytania i podsumowania sesji."
-            />
-          }
-        />
-        <Route
-          path="statystyki"
-          element={
-            <Soon
-              title="Statystyki"
-              stage={5}
-              description="Regularność, postęp w kategoriach i obszary do pogłębienia."
-            />
-          }
-        />
-        <Route
-          path="osiagniecia"
-          element={
-            <Soon
-              title="Osiągnięcia"
-              stage={5}
-              description="Odznaki i kamienie milowe za regularną naukę."
-            />
-          }
-        />
-        <Route
-          path="niedokonczone"
-          element={
-            <Soon
-              title="Niedokończone"
-              stage={3}
-              description="Tematy, do których warto wrócić – bez presji nadrabiania."
-            />
-          }
-        />
-        <Route
-          path="tematy"
-          element={
-            <Soon
-              title="Baza tematów"
-              stage={2}
-              description="Import paczek z tematami, podgląd zmian i aktualizacje."
-            />
-          }
-        />
-        <Route path="ustawienia" element={<SettingsPage />} />
-        <Route path="wiecej" element={<More />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Route>
-    </Routes>
+    <TaxonomyProvider>
+      <Routes>
+        <Route element={<Shell />}>
+          <Route index element={<Home />} />
+          <Route
+            path="historia"
+            element={
+              <Soon
+                title="Historia"
+                stage={3}
+                description="Tu zobaczysz wcześniejsze sesje nauki i wrócisz do tematów."
+              />
+            }
+          />
+          <Route
+            path="baza-wiedzy"
+            element={
+              <Soon
+                title="Baza wiedzy"
+                stage={4}
+                description="Twoja osobista mini-encyklopedia z notatek, definicji i powiązań."
+              />
+            }
+          />
+          <Route
+            path="notatki"
+            element={
+              <Soon
+                title="Notatki"
+                stage={3}
+                description="Własne wnioski, pytania i podsumowania sesji."
+              />
+            }
+          />
+          <Route
+            path="statystyki"
+            element={
+              <Soon
+                title="Statystyki"
+                stage={5}
+                description="Regularność, postęp w kategoriach i obszary do pogłębienia."
+              />
+            }
+          />
+          <Route
+            path="osiagniecia"
+            element={
+              <Soon
+                title="Osiągnięcia"
+                stage={5}
+                description="Odznaki i kamienie milowe za regularną naukę."
+              />
+            }
+          />
+          <Route
+            path="niedokonczone"
+            element={
+              <Soon
+                title="Niedokończone"
+                stage={3}
+                description="Tematy, do których warto wrócić – bez presji nadrabiania."
+              />
+            }
+          />
+          <Route path="tematy" element={<Topics />} />
+          <Route path="tematy/import" element={<ImportWizard />} />
+          <Route path="tematy/importy" element={<ImportHistory />} />
+          <Route path="tematy/importy/:id" element={<ImportReportPage />} />
+          <Route path="tematy/:id" element={<TopicDetail />} />
+          <Route path="ustawienia" element={<SettingsPage />} />
+          <Route path="wiecej" element={<More />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      </Routes>
+    </TaxonomyProvider>
   );
 }
 

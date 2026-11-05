@@ -3,9 +3,12 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
 
-const PORT = 47901;
-// Osobny, tymczasowy katalog danych – testy nigdy nie dotykają prawdziwej bazy użytkownika.
-const dataDir = process.env.LUMEN_E2E_DATA_DIR ?? mkdtempSync(join(tmpdir(), 'lumen-e2e-'));
+// Każdy zestaw testów dostaje własny serwer na osobnym porcie i z osobnym, tymczasowym katalogiem
+// danych – testy nigdy nie dotykają prawdziwej bazy użytkownika i nie zależą od kolejności.
+const stages = [
+  { name: 'etap1', match: /stage1\.spec\.ts/, port: 47901 },
+  { name: 'etap2', match: /stage2\.spec\.ts/, port: 47902 },
+];
 
 export default defineConfig({
   testDir: 'e2e',
@@ -13,14 +16,22 @@ export default defineConfig({
   workers: 1,
   retries: 0,
   reporter: [['list']],
-  timeout: 60_000,
-  use: { baseURL: `http://127.0.0.1:${PORT}`, locale: 'pl-PL', trace: 'retain-on-failure' },
-  projects: [{ name: 'firefox', use: { ...devices['Desktop Firefox'] } }],
-  webServer: {
+  timeout: 90_000,
+  use: { locale: 'pl-PL', trace: 'retain-on-failure' },
+  projects: stages.map((s) => ({
+    name: s.name,
+    testMatch: s.match,
+    use: { ...devices['Desktop Firefox'], baseURL: `http://127.0.0.1:${s.port}` },
+  })),
+  webServer: stages.map((s) => ({
     command: 'node launcher/start.mjs',
-    url: `http://127.0.0.1:${PORT}/api/health`,
+    url: `http://127.0.0.1:${s.port}/api/health`,
     reuseExistingServer: false,
     timeout: 30_000,
-    env: { LUMEN_DATA_DIR: dataDir, LUMEN_PORT: String(PORT), LUMEN_NO_BROWSER: '1' },
-  },
+    env: {
+      LUMEN_DATA_DIR: mkdtempSync(join(tmpdir(), `lumen-e2e-${s.name}-`)),
+      LUMEN_PORT: String(s.port),
+      LUMEN_NO_BROWSER: '1',
+    },
+  })),
 });

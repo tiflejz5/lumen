@@ -2,7 +2,7 @@
 
 Osobista aplikacja do codziennego, około 15-minutowego rozwijania wiedzy: własny research, krytyczne myślenie, notatki i osobista baza wiedzy. **Local-first, szyfrowana, bez telemetrii i bez zewnętrznego AI.**
 
-> Stan: **Etap 1 z 8** (fundament, zabezpieczenia, kopie zapasowe, uruchamianie). Sesje nauki i baza tematów pojawią się w kolejnych etapach. Zobacz [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
+> Stan: **Etap 2 z 8** (fundament i zabezpieczenia, import bazy tematów, temat dnia). Sesje nauki, notatki i statystyki pojawią się w kolejnych etapach. Zobacz [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 
 ## Jak to działa
 
@@ -48,7 +48,7 @@ Zmienne środowiskowe: `LUMEN_DATA_DIR` (katalog danych), `LUMEN_PORT`, `LUMEN_I
 
 ## Dokumentacja
 
-[Architektura](docs/ARCHITECTURE.md) · [Bezpieczeństwo](docs/SECURITY.md) · [Kopie zapasowe](docs/BACKUP.md) · [Instrukcja użytkownika](docs/USER_GUIDE.md) · [Historia zmian](CHANGELOG.md)
+[Architektura](docs/ARCHITECTURE.md) · [Bezpieczeństwo](docs/SECURITY.md) · [Model danych](docs/DATA_MODEL.md) · [Import](docs/IMPORT.md) · [Kopie zapasowe](docs/BACKUP.md) · [Instrukcja użytkownika](docs/USER_GUIDE.md) · [Historia zmian](CHANGELOG.md)
 
 ## Prywatność
 

@@ -30,3 +30,10 @@ data-local/
 .idea/
 Thumbs.db
 desktop.ini
+
+# TREŚCI UŻYTKOWNIKA (prywatne, poza repozytorium)
+wiedza-baza-*/
+catalog.json
+KATALOG.md
+pack-*.json
+FIELDS.md

@@ -3,26 +3,6 @@ import { BookOpenCheck } from 'lucide-react';
 import { NAV } from '../app/nav';
 import { Card, EmptyState, PageHeader } from '../components/ui';
 
-const today = new Intl.DateTimeFormat('pl-PL', {
-  weekday: 'long',
-  day: 'numeric',
-  month: 'long',
-}).format(new Date());
-
-export function Home() {
-  return (
-    <>
-      <PageHeader title="Dziś" subtitle={today.charAt(0).toUpperCase() + today.slice(1)} />
-      <Card>
-        <EmptyState icon={BookOpenCheck} title="Nie ma jeszcze tematów do nauki">
-          Baza tematów jest pusta. Import paczek z tematami i codzienne losowanie pojawią się w
-          kolejnym etapie. Zabezpieczenia i kopie zapasowe działają już teraz.
-        </EmptyState>
-      </Card>
-    </>
-  );
-}
-
 type SoonProps = { title: string; stage: number; description: string };
 
 export function Soon({ title, stage, description }: SoonProps) {

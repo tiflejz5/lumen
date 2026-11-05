@@ -33,7 +33,9 @@ import {
   verifyBackup,
   verifyBackupWithDek,
 } from '../modules/backup/backup.ts';
+import { ImportStaging } from '../modules/importer/staging.ts';
 import { AppSession, SessionError } from '../session/app-session.ts';
+import { registerContentRoutes } from './content-routes.ts';
 import { VaultError } from '../vault/vault.ts';
 
 export const SESSION_COOKIE = 'lumen_session';
@@ -49,6 +51,8 @@ export type BuildAppOptions = {
   shutdownToken?: string;
   onShutdown?: () => void;
   onActivity?: () => void;
+  /** Zegar (do testów). */
+  now?: () => Date;
 };
 
 const CSP = [
@@ -325,6 +329,11 @@ export async function buildApp(options: BuildAppOptions): Promise<FastifyInstanc
     if (body.recoveryKey) return verifyBackup(file, { recoveryKey: body.recoveryKey });
     return verifyBackupWithDek(file, session.requireUnlocked().dek);
   });
+
+  // ── treści: import, tematy, temat dnia ────────────────────────────────────────────────────
+  const staging = new ImportStaging();
+  session.onLock(() => staging.clear());
+  registerContentRoutes(app, { session, paths, staging, now: options.now ?? (() => new Date()) });
 
   // ── frontend (po zbudowaniu) ─────────────────────────────────────────────────────────────
   if (options.webRoot && existsSync(join(options.webRoot, 'index.html'))) {

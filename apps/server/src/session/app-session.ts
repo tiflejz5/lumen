@@ -77,6 +77,7 @@ export class AppSession {
   private tokens = new Set<string>(); // SHA-256 tokenów sesji
   private lastActivity = 0;
   private pending: Pending | null = null;
+  private lockListeners: (() => void)[] = [];
 
   private failures = 0;
   private blockedUntil = 0;
@@ -153,7 +154,13 @@ export class AppSession {
     return false;
   }
 
+  /** Rejestruje funkcję wywoływaną przy każdej blokadzie (np. czyszczenie podglądów importu). */
+  onLock(listener: () => void): void {
+    this.lockListeners.push(listener);
+  }
+
   lock(): void {
+    for (const listener of this.lockListeners) listener();
     try {
       this.db?.close();
     } catch {

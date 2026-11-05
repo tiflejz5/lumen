@@ -19,6 +19,15 @@ const VARIANTS: Record<ButtonVariant, string> = {
   danger: 'bg-danger/15 text-danger border border-danger/40 hover:bg-danger/25 disabled:opacity-50',
 };
 
+/** Klasy przycisku do użycia także na linkach (<Link className={buttonClasses('primary')}>). */
+export function buttonClasses(variant: ButtonVariant = 'secondary', className?: string): string {
+  return cx(
+    'inline-flex min-h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium transition-colors',
+    VARIANTS[variant],
+    className,
+  );
+}
+
 export function Button({
   variant = 'secondary',
   busy,

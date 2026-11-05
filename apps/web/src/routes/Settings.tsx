@@ -108,6 +108,21 @@ function SecuritySection() {
               ))}
             </select>
           </Field>
+          <label className="flex cursor-pointer items-start gap-3 text-sm sm:col-span-2">
+            <input
+              type="checkbox"
+              checked={settings.demoMode}
+              onChange={(e) => update({ demoMode: e.target.checked })}
+              className="mt-1 size-4 accent-[var(--color-accent)]"
+            />
+            <span>
+              Tryb demonstracyjny
+              <span className="block text-subtle">
+                Uwzględnia w losowaniu i na listach przykładowe tematy z paczek oznaczonych jako
+                przykładowe. Wyłącz, gdy zaczniesz korzystać z prawdziwej bazy.
+              </span>
+            </span>
+          </label>
         </div>
       )}
       {error ? <Banner tone="danger">{error}</Banner> : null}

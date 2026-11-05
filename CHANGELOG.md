@@ -1,5 +1,16 @@
 # Historia zmian
 
+## 0.2.0 – Etap 2: import tematów i temat dnia (2026-11-05)
+
+- Import wydań bazy (folder, ZIP, pojedyncze pliki, `catalog.json`) z podglądem, klasyfikacją (nowy, aktualizacja, konflikt, odświeżenie, bez zmian, starsza rewizja, nieprawidłowy) i zatwierdzaniem. Zmiany istniejących tematów wymagają zgody.
+- Walidacja schematami autora bazy (Ajv, JSON Schema 2020-12) oraz reguły poziomu 2 portowane z `validate.py`; testy różnicowe względem oryginału (Python).
+- Sumy SHA-256 z manifestu, kontrola wersji głównej schematu, bezpieczne ścieżki plików.
+- Zapis w jednej transakcji po automatycznej kopii zapasowej; raport i historia importów; historia wersji treści; dane użytkownika nietykalne.
+- Baza tematów: statystyki wydania, postęp katalogu, lista z filtrami i wyszukiwaniem (z obsługą ł), karta tematu z warstwą podstawową (bez odpowiedzi).
+- Temat dnia i dodatkowe losowanie: algorytm regułowy z ziarnem, rotacja kategorii, równowaga, trudność, pogłębianie, uzasadnienie „Dlaczego ten temat?”.
+- Oznaczenia „znam”, „nieinteresujący”, „odłóż”; tryb demonstracyjny dla paczek przykładowych.
+- Migracja 002; wspólne typy API w `@lumen/core`.
+
 ## 0.1.0 – Etap 1: fundament (2026-11-05)
 
 - Monorepo (npm workspaces), TypeScript strict, Vitest, Playwright (Firefox), ESLint, Prettier.
