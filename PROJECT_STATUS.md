@@ -13,7 +13,8 @@ Aplikacja: **Lumen** (nazwa wybrana przez użytkownika). Ostatnia aktualizacja: 
 ## Decyzje użytkownika
 
 - Nazwa: Lumen. Przeglądarka: Firefox. Pobieranie przenośnego Node: tak.
-- Repozytorium GitHub publiczne z Pages (dokumentacja z `docs/`; aplikacja działa tylko lokalnie).
+- Repozytorium GitHub publiczne z Pages (dokumentacja z `docs/`; aplikacja działa tylko lokalnie): https://github.com/tiflejz5/lumen · strona: https://tiflejz5.github.io/lumen/
+- Autor commitów: adres noreply GitHuba (prawdziwy e-mail nie trafia do publicznej historii). Pliki treści użytkownika (`catalog.json`, `KATALOG.md`, `wiedza-baza-0.1.0/`, `pack-000-example.json`, `FIELDS.md`) celowo NIE są w repozytorium do czasu decyzji użytkownika.
 - Streak: łagodny (1 dzień wolny w tygodniu nie przerywa serii), do dopracowania w Etapie 5.
 
 ## Wynik testów Etapu 1
