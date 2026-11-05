@@ -4,13 +4,13 @@ Aplikacja: **Lumen**. Ostatnia aktualizacja: 2026-11-05.
 
 ## Stan etapów
 
-| Etap                                                        | Stan                                                      |
-| ----------------------------------------------------------- | --------------------------------------------------------- |
-| 0 Architektura                                              | zatwierdzony                                              |
-| 1 Fundament, zabezpieczenia, kopie, launcher                | zatwierdzony                                              |
-| 2 Import bazy tematów, katalog, temat dnia                  | zaimplementowany i przetestowany                          |
-| 3 Sesja nauki, timer, aktywności, oceny, podstawowe notatki | **zaimplementowany i przetestowany, czeka na akceptację** |
-| 4–8                                                         | nie rozpoczęte                                            |
+| Etap                                                        | Stan                             |
+| ----------------------------------------------------------- | -------------------------------- |
+| 0 Architektura                                              | zatwierdzony                     |
+| 1 Fundament, zabezpieczenia, kopie, launcher                | zatwierdzony                     |
+| 2 Import bazy tematów, katalog, temat dnia                  | zaimplementowany i przetestowany |
+| 3 Sesja nauki, timer, aktywności, oceny, podstawowe notatki | zatwierdzony                     |
+| 4–8                                                         | nie rozpoczęte                   |
 
 ## Decyzje użytkownika
 
