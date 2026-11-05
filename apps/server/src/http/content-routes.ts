@@ -26,6 +26,14 @@ import {
   needsReview,
 } from '../modules/topics/repo.ts';
 import {
+  getAchievements,
+  getReviewAnswer,
+  getReviewCard,
+  getReviewOverview,
+  getStats,
+  rateReview,
+} from '../modules/progress/progress.ts';
+import {
   createEntry,
   deleteEntry,
   getEntry,
@@ -50,6 +58,7 @@ import type { AppSession } from '../session/app-session.ts';
 
 const TOPIC_ID = /^(fin|nau|zdr|his|psy|ogo)-\d{4}$/;
 const topicIdParam = z.object({ id: z.string().regex(TOPIC_ID) });
+const topicIdParam2 = z.object({ topicId: z.string().regex(TOPIC_ID) });
 
 const previewBody = z
   .object({
@@ -123,6 +132,8 @@ const entryBody = z
   .strict();
 const entryUpdateBody = entryBody.omit({ topicId: true });
 const textQuery = z.object({ q: z.string().max(100).default('') });
+
+const ratingBody = z.object({ rating: z.enum(['again', 'hard', 'good', 'easy']) }).strict();
 
 const listQuery = z.object({
   query: z.string().max(100).optional(),
@@ -507,4 +518,27 @@ export function registerContentRoutes(app: FastifyInstance, deps: ContentRouteDe
   app.get('/api/search', async (req) =>
     search(session.requireUnlocked().db, textQuery.parse(req.query).q),
   );
+
+  // ── powtórki, statystyki, odznaki ────────────────────────────────────────────────────────────
+  app.get('/api/reviews', async () => getReviewOverview(dailyContext()));
+
+  app.get('/api/reviews/:topicId/card', async (req) =>
+    getReviewCard(session.requireUnlocked().db, topicIdParam2.parse(req.params).topicId),
+  );
+
+  app.get('/api/reviews/:topicId/answer', async (req) =>
+    getReviewAnswer(session.requireUnlocked().db, topicIdParam2.parse(req.params).topicId),
+  );
+
+  app.post('/api/reviews/:topicId', async (req) =>
+    rateReview(
+      dailyContext(),
+      topicIdParam2.parse(req.params).topicId,
+      ratingBody.parse(req.body).rating,
+    ),
+  );
+
+  app.get('/api/stats', async () => getStats(dailyContext()));
+
+  app.get('/api/achievements', async () => ({ badges: getAchievements(dailyContext()) }));
 }

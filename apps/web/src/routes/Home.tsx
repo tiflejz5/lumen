@@ -1,7 +1,7 @@
 import { BookOpenCheck, ChevronDown, Clock, Dices, FileDown } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import type { DailyResult, DayStatus, TopicCard } from '@lumen/core';
+import type { DailyResult, DayStatus, ReviewOverview, StatsOverview, TopicCard } from '@lumen/core';
 import { CategoryIcon, Pill } from '../components/bits';
 import {
   Banner,
@@ -91,11 +91,15 @@ export function Home() {
   const [why, setWhy] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [day, setDay] = useState<DayStatus | null>(null);
+  const [reviewsDue, setReviewsDue] = useState(0);
+  const [streak, setStreak] = useState(0);
 
   const load = useCallback(async () => {
     try {
       setDaily(await api<DailyResult>('GET', '/api/daily'));
       setDay(await api<DayStatus>('GET', '/api/day'));
+      setReviewsDue((await api<ReviewOverview>('GET', '/api/reviews')).due.length);
+      setStreak((await api<StatsOverview>('GET', '/api/stats')).streak.current);
       setError(null);
     } catch (e) {
       setError(errorMessage(e));
@@ -142,6 +146,16 @@ export function Home() {
       {error ? (
         <div className="mb-4">
           <Banner tone="danger">{error}</Banner>
+        </div>
+      ) : null}
+      {streak > 0 || reviewsDue > 0 ? (
+        <div className="mb-4 flex flex-wrap items-center gap-3">
+          {streak > 0 ? <Pill tone="accent">Seria: {streak} dni</Pill> : null}
+          {reviewsDue > 0 ? (
+            <Link to="/powtorki" className={buttonClasses('secondary')}>
+              Powtórki do zrobienia: {reviewsDue}
+            </Link>
+          ) : null}
         </div>
       ) : null}
 

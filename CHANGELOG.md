@@ -1,5 +1,15 @@
 # Historia zmian
 
+## 0.5.0 – Etap 5: powtórki, statystyki, odznaki (2026-11-05)
+
+- Powtórki w rosnących odstępach (1, 3, 7, 16, 35, 75, 150 dni): pytanie, własna próba przypomnienia, odsłonięcie odpowiedzi i ocena (nie pamiętam / z trudem / dobrze / łatwo). Tematy ukończone wcześniej dostają powtórkę w migracji.
+- Łagodny streak: jeden dzień wolny w tygodniu nie przerywa serii, dwa z rzędu tak; powtórki też liczą się jako aktywność.
+- Statystyki: czas nauki, ukończone tematy, trafność quizów, wykres ostatnich 30 dni, postęp i pewność w kategoriach, obszary do pogłębienia.
+- Osiągnięcia: 10 odznak z paskiem postępu; zdobyte zostają na stałe.
+- Ekran „Dziś” pokazuje serię i liczbę powtórek do zrobienia.
+- Launcher sam buduje interfejs, gdy brakuje go lub kod jest nowszy; `launcher\Aktualizuj.cmd` pobiera aktualizację z GitHuba.
+- Migracja 005; testy jednostkowe, HTTP i end-to-end.
+
 ## 0.4.0 – Etap 4: baza wiedzy (2026-11-05)
 
 - Osobista baza wiedzy: pojęcia z definicjami własnymi słowami, powiązania `[[termin]]` (czytane z treści, więc nie mogą się rozjechać), odnośniki zwrotne, brakujące pojęcia wyróżnione.

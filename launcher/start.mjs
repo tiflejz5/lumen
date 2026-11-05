@@ -1,7 +1,8 @@
 // Uruchamia Lumen: jeśli serwer już działa, tylko otwiera przeglądarkę; w przeciwnym razie
 // startuje serwer w tym procesie i otwiera przeglądarkę, gdy będzie gotowy.
-import { spawn } from 'node:child_process';
-import { existsSync, promises as fs } from 'node:fs';
+import { spawn, spawnSync } from 'node:child_process';
+import { existsSync, promises as fs, readdirSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolvePaths } from '../apps/server/src/config.ts';
 
@@ -60,10 +61,40 @@ if (existing && (await healthy(existing.port))) {
   process.exit(0);
 }
 
-if (!existsSync(new URL('../apps/web/dist/index.html', import.meta.url))) {
-  fail(
-    'Brakuje zbudowanego interfejsu (apps/web/dist). Uruchom w folderze projektu: npm run build',
-  );
+// Interfejs buduje się sam, gdy brakuje go albo kod źródłowy jest nowszy (np. po pobraniu aktualizacji).
+const distIndex = new URL('../apps/web/dist/index.html', import.meta.url);
+
+function newestSourceTime() {
+  let newest = 0;
+  const walk = (dir) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const full = join(dir, entry.name);
+      if (entry.isDirectory()) walk(full);
+      else newest = Math.max(newest, statSync(full).mtimeMs);
+    }
+  };
+  for (const d of ['apps/web/src', 'packages/core/src', 'apps/web/public'])
+    if (existsSync(join(root, d))) walk(join(root, d));
+  for (const f of ['apps/web/index.html', 'apps/web/vite.config.ts', 'apps/web/package.json'])
+    if (existsSync(join(root, f))) newest = Math.max(newest, statSync(join(root, f)).mtimeMs);
+  return newest;
+}
+
+const hasDist = existsSync(distIndex);
+const stale = !hasDist || statSync(distIndex).mtimeMs < newestSourceTime();
+if (stale && existsSync(join(root, 'node_modules', '.bin'))) {
+  console.log('\n  Aktualizuję interfejs (jednorazowo, kilka sekund)…\n');
+  const build = spawnSync('npm.cmd', ['run', 'build'], {
+    cwd: root,
+    stdio: 'inherit',
+    shell: true,
+  });
+  if (build.status !== 0 && !hasDist)
+    fail('Nie udało się zbudować interfejsu. Uruchom w folderze projektu: npm install');
+  if (build.status !== 0)
+    console.error('\n  Nie udało się odświeżyć interfejsu – uruchamiam poprzednią wersję.\n');
+} else if (!hasDist) {
+  fail('Brakuje zbudowanego interfejsu. Uruchom w folderze projektu: npm install');
 }
 if (Number(process.versions.node.split('.')[0]) < 24) {
   fail(

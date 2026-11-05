@@ -1,4 +1,4 @@
-# Model danych (stan: Etap 4)
+# Model danych (stan: Etap 5)
 
 Baza: jeden zaszyfrowany plik SQLite (SQLCipher). Schemat zmieniają numerowane migracje w `apps/server/src/db/migrations/` (przed migracją powstaje kopia zapasowa).
 
@@ -48,6 +48,16 @@ Zasady: dla tematu może istnieć jedna aktywna sesja (indeks częściowy). Etap
 | `knowledge_entries` | pojęcie (UUIDv7), `term`, znormalizowany `term_key` (unikalny wśród nieusuniętych), `definition`, opcjonalny `topic_id`, miękkie usuwanie |
 
 Powiązania `[[termin]]` nie mają osobnej tabeli: są odczytywane z definicji i rozwiązywane po `term_key`, a odnośniki zwrotne wyliczane przy odczycie. Zmiana nazwy pojęcia nie psuje danych – powiązanie bez pojęcia po prostu jest oznaczone jako brakujące.
+
+## Migracja 005 – powtórki i odznaki
+
+| Tabela         | Opis                                                                                    |
+| -------------- | --------------------------------------------------------------------------------------- |
+| `review_items` | harmonogram powtórki tematu: `stage` (0–6), `due_date`, liczniki `reps` i `lapses`      |
+| `review_log`   | dziennik ocen powtórek (`again`/`hard`/`good`/`easy`, etap przed i po)                  |
+| `badges`       | zdobyte odznaki z datą (definicje i progi są w kodzie: `packages/core/src/progress.ts`) |
+
+Harmonogram: odstępy `REVIEW_LADDER`; „nie pamiętam” wraca do etapu 0, „z trudem” zostaje, „dobrze” +1, „łatwo” +2. Powtórkę zakłada ukończenie tematu (kolejne ukończenie resetuje ją). Streak jest liczony z dni, w których zakończono sesję lub wykonano powtórkę.
 
 ## Losowanie
 

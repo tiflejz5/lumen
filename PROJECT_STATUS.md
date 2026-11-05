@@ -20,6 +20,10 @@ Aplikacja: **Lumen**. Ostatnia aktualizacja: 2026-11-05.
 - Streak: łagodny (1 dzień wolny w tygodniu nie przerywa serii), do dopracowania w Etapie 5.
 - Format dostarczania paczek: folder, ZIP lub pojedyncze pliki. Paczki przykładowe: opcjonalny import + tryb demonstracyjny. Katalog 240 tytułów: importowany jako „zaplanowane tytuły”.
 
+## Wynik testów Etapu 5
+
+- Vitest: 222 testy (m.in. harmonogram powtórek, streak, odznaki). Playwright (Firefox): 28 testów (Etap 5: 4). `tsc`, ESLint: bez błędów.
+
 ## Wynik testów Etapu 4
 
 - Vitest: 209 testów. Playwright (Firefox): 24 testy (Etap 4: 5). `tsc`, ESLint: bez błędów.
@@ -60,4 +64,4 @@ Patrz `README.md` i `docs/USER_GUIDE.md`. Dane: `%LOCALAPPDATA%\Lumen\`. Po aktu
 
 ## Następne zadania
 
-Etap 5: powtórki (odstępy), statystyki, odznaki i łagodny streak. Później: wygląd interfejsu (Etap 6–8: m.in. automatyczne kopie i przywracanie z UI).
+Etap 6: automatyczne kopie zapasowe i przywracanie z interfejsu, eksport/import danych użytkownika. Następnie dopracowanie wyglądu interfejsu (Etap 7–8).

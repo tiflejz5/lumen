@@ -54,6 +54,16 @@ Timer mierzy aktywny czas nauki i można go wstrzymać; jest zapisywany co kilka
 
 **Baza wiedzy** to Twoja mini-encyklopedia. Dodajesz pojęcia własnymi słowami (_Nowe pojęcie_) albo zapisujesz je z sesji: w kroku „Wypowiedź” rozwiń _Pojęcia, mity i granice wiedzy_ i kliknij _Zapisz do bazy wiedzy_. W definicji możesz powiązać pojęcia, wpisując nazwę w podwójnych nawiasach, np. `[[Inflacja]]`. Istniejące pojęcia stają się linkami, brakujące są podkreślone, a na stronie pojęcia widać, które inne pojęcia się do niego odwołują. Wyszukiwanie ignoruje wielkość liter i polskie znaki. Notatki możesz dodawać także na karcie każdego tematu.
 
+## Powtórki, statystyki i osiągnięcia
+
+- **Powtórki:** po ukończeniu tematu aplikacja planuje powtórki w rosnących odstępach. Na ekranie _Dziś_ widzisz, ile ich czeka. Najpierw próbujesz przypomnieć sobie odpowiedź, potem ją odsłaniasz i oceniasz, jak poszło.
+- **Statystyki:** seria dni, czas nauki, trafność quizów, wykres ostatnich 30 dni i postęp w kategoriach. Seria jest łagodna: jeden dzień wolny w tygodniu jej nie przerywa.
+- **Osiągnięcia:** odznaki za regularność i postęp; zdobyte zostają na stałe.
+
+## Aktualizacja aplikacji
+
+Dwuklik w `launcher\Aktualizuj.cmd` pobiera najnowszą wersję z GitHuba. Interfejs zbuduje się sam przy najbliższym uruchomieniu skrótu **Lumen** – nie trzeba nic budować ręcznie.
+
 ## Kopie zapasowe
 
 Ustawienia → **Kopie zapasowe** → _Utwórz kopię teraz_. Skopiuj plik z podanego folderu na pendrive lub dysk zewnętrzny. Przycisk _Sprawdź_ weryfikuje kopię.

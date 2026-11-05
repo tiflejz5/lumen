@@ -13,6 +13,7 @@ import {
 } from '@lumen/core';
 import type { Db } from '../../db/connection.ts';
 import { currentDate, type DailyContext } from '../daily/daily.ts';
+import { scheduleFirstReview } from '../progress/progress.ts';
 
 export class StudyError extends Error {
   code: string;
@@ -359,6 +360,7 @@ export function finishSession(ctx: DailyContext, id: string, input: FinishInput)
          ON CONFLICT(topic_id) DO UPDATE SET status = 'completed', postponed_until = NULL,
            deepen = excluded.deepen, status_date = excluded.status_date, updated_at = excluded.updated_at`,
       ).run(row.topic_id, input.deepen ? 1 : 0, row.date, now);
+      scheduleFirstReview(db, row.topic_id, currentDate(ctx), now);
     } else if (input.deepen !== undefined) {
       db.prepare('UPDATE topic_user_state SET deepen = ?, updated_at = ? WHERE topic_id = ?').run(
         input.deepen ? 1 : 0,

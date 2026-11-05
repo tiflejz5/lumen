@@ -6,7 +6,8 @@ import { TaxonomyProvider } from '../lib/taxonomy';
 import { Home } from '../routes/Home';
 import { KnowledgeEntryPage, KnowledgePage } from '../routes/Knowledge';
 import { ImportHistory, ImportReportPage, ImportWizard } from '../routes/ImportWizard';
-import { More, Soon } from '../routes/Pages';
+import { More } from '../routes/Pages';
+import { AchievementsPage, ReviewsPage, StatsPage } from '../routes/Progress';
 import { SessionPage } from '../routes/Session';
 import { SettingsPage } from '../routes/Settings';
 import { Setup } from '../routes/Setup';
@@ -54,27 +55,10 @@ function Gate() {
           <Route path="baza-wiedzy" element={<KnowledgePage />} />
           <Route path="baza-wiedzy/:id" element={<KnowledgeEntryPage />} />
           <Route path="notatki" element={<NotesPage />} />
-          <Route
-            path="statystyki"
-            element={
-              <Soon
-                title="Statystyki"
-                stage={5}
-                description="Regularność, postęp w kategoriach i obszary do pogłębienia."
-              />
-            }
-          />
-          <Route
-            path="osiagniecia"
-            element={
-              <Soon
-                title="Osiągnięcia"
-                stage={5}
-                description="Odznaki i kamienie milowe za regularną naukę."
-              />
-            }
-          />
+          <Route path="statystyki" element={<StatsPage />} />
+          <Route path="osiagniecia" element={<AchievementsPage />} />
           <Route path="niedokonczone" element={<UnfinishedPage />} />
+          <Route path="powtorki" element={<ReviewsPage />} />
           <Route path="sesja/:id" element={<SessionPage />} />
           <Route path="tematy" element={<Topics />} />
           <Route path="tematy/import" element={<ImportWizard />} />
